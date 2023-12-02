@@ -1,0 +1,21 @@
+# Utiliser une image Node.js comme base
+FROM node:lts
+
+# Définir le répertoire de travail dans le conteneur
+WORKDIR /app
+
+# Copiez d'abord les fichiers de dépendance pour profiter de la mise en cache des couches Docker
+COPY package*.json tsconfig.json babel.config.js ./
+
+# Copier les fichiers de dépendances et installer les dépendances
+RUN npm install
+
+# Installer wait-on globalement
+RUN npm install -g wait-on
+
+# Copier les fichiers de test et de source
+COPY src ./src
+COPY test ./test
+
+# Exécuter les tests lors du démarrage du conteneur
+CMD ["npm", "run", "test"]
