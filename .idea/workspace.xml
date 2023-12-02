@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="f87143a6-64d4-439c-8fac-ab819ae73922" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/user/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/user/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/user/Dockerfile.test" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/user/babel.config.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/user/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/user/pnpm-lock.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/user/src/application/graphql/resolvers.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/user/src/application/graphql/typeDefs.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/user/src/domain/config/passport.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/user/src/domain/interface/model/location.interface.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/user/src/domain/interface/model/user.interface.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/user/src/domain/interface/mutation/utils.mutation.interface.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/user/src/framework/route/auth.route.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/user/src/infrastructure/dataValidation/mutation.validation.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/user/src/infrastructure/model/user.model.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/user/src/server.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/user/test/user.mutation.test.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/user/tsconfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spark_backend.iml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="package.json" />
+        <option value="tsconfig.json" />
+        <option value="TypeScript File" />
+        <option value="Dockerfile" />
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="2Yl4PD2egpI3GsQm2cqzbNn9GC5" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs.jest.jest_package&quot;: &quot;D:/Project_ongoing/spark_backend/main/user/node_modules/jest&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;D:\\Project_ongoing\\spark_backend\\main\\user\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Project_ongoing\spark_backend\main\user" />
+      <recent name="D:\Project_ongoing\spark_backend\main\user\apollo_mutation" />
+      <recent name="D:\Project_ongoing\spark_backend\main\user\src" />
+      <recent name="D:\Project_ongoing\spark_backend" />
+      <recent name="D:\Project_ongoing\spark_backend\main\user\framework" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Jest.User Authentication and Management (1)">
+    <configuration name="User Authentication and Management (1)" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/main/user/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/main/user" />
+      <envs />
+      <scope-kind value="SUITE" />
+      <test-file value="$PROJECT_DIR$/main/user/test/user.mutation.test.ts" />
+      <test-names>
+        <test-name value="User Authentication and Management" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="User Authentication and Management" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/main/user/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/main/user" />
+      <envs />
+      <scope-kind value="SUITE" />
+      <test-file value="$PROJECT_DIR$/main/user/src/test/user.mutation.test.ts" />
+      <test-names>
+        <test-name value="User Authentication and Management" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="User Authentication and Management.User login" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/main/user/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/main/user" />
+      <envs />
+      <scope-kind value="SUITE" />
+      <test-file value="$PROJECT_DIR$/main/user/test/user.mutation.test.ts" />
+      <test-names>
+        <test-name value="User Authentication and Management" />
+        <test-name value="User login" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Jest.User Authentication and Management (1)" />
+        <item itemvalue="Jest.User Authentication and Management.User login" />
+        <item itemvalue="Jest.User Authentication and Management" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f87143a6-64d4-439c-8fac-ab819ae73922" name="Changes" comment="" />
+      <created>1701086807265</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1701086807265</updated>
+      <workItem from="1701086808244" duration="5591000" />
+      <workItem from="1701128974443" duration="2000" />
+      <workItem from="1701131985371" duration="444000" />
+      <workItem from="1701173527110" duration="3042000" />
+      <workItem from="1701264389856" duration="1195000" />
+      <workItem from="1701346445927" duration="9046000" />
+      <workItem from="1701358499299" duration="11739000" />
+      <workItem from="1701388110315" duration="1631000" />
+      <workItem from="1701446736301" duration="17000" />
+      <workItem from="1701446764125" duration="3160000" />
+      <workItem from="1701451229556" duration="6053000" />
+      <workItem from="1701477845585" duration="2437000" />
+      <workItem from="1701506829389" duration="1695000" />
+      <workItem from="1701511893136" duration="2642000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+  </component>
+</project>
