@@ -1,10 +1,12 @@
+//passport.ts
+
 import passport from 'passport';
-import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
+import {Strategy as JwtStrategy, ExtractJwt} from 'passport-jwt';
 import {User} from "../../infrastructure/model/user.model";
 
 const options = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: process.env.SECRET ?? 'SECRET_KEY',
+    secretOrKey: process.env.SECRET_KEY ?? 'SECRET_KEY',
 };
 
 passport.use(

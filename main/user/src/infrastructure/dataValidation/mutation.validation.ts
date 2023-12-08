@@ -7,7 +7,6 @@ const signUpValidationSchema = Joi.object({
     phone: Joi.string().required(),
     firstName: Joi.string().required(),
     lastName: Joi.string().required(),
-    avatar: Joi.string() || null || Joi.string().allow(''),
     active: Joi.boolean(),
     location: Joi.object({
         address: Joi.string().required(),
@@ -19,7 +18,8 @@ const signUpValidationSchema = Joi.object({
 });
 
 const loginValidationSchema = Joi.object({
-    username: Joi.string().alphanum().min(3).max(30).required(),
+    username: Joi.string().alphanum().min(3).max(30),
+    email: Joi.string().email(),
     password: Joi.string().min(8).max(30).required(),
 });
 
@@ -30,7 +30,6 @@ const updateValidationSchema = Joi.object({
     phone: Joi.string(),
     firstName: Joi.string(),
     lastName: Joi.string(),
-    avatar: Joi.string(),
     active: Joi.boolean(),
     location: Joi.object({
         address: Joi.string(),
@@ -59,16 +58,11 @@ const updateLocationValidationSchema = Joi.object({
     })
 });
 
-const updateAvatarValidationSchema = Joi.object({
-    avatar: Joi.string().required(),
-});
-
-export {
+export const validationSchemas = {
     signUpValidationSchema,
     loginValidationSchema,
     updateValidationSchema,
     updatePasswordValidationSchema,
     updateEmailValidationSchema,
     updateLocationValidationSchema,
-    updateAvatarValidationSchema,
-}
+};

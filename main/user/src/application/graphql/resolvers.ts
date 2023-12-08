@@ -1,29 +1,37 @@
 import {User} from '../../infrastructure/model/user.model';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import UserInterface from "../../domain/interface/model/user.interface";
+import jwt, {JwtPayload} from 'jsonwebtoken';
+import {validationSchemas} from "../../infrastructure/dataValidation/mutation.validation";
 import {
-    loginValidationSchema,
-    signUpValidationSchema,
-    updateAvatarValidationSchema,
-    updateEmailValidationSchema,
-    updateLocationValidationSchema,
-    updatePasswordValidationSchema,
-    updateValidationSchema
-} from "../../infrastructure/dataValidation/mutation.validation";
-import {ContextType, QueryArgs, UpdateUserInput} from "../../domain/interface/mutation/utils.mutation.interface";
+    ContextType,
+    UpdateLocation,
+    UpdateUserInput,
+    UserInput
+} from "../../domain/interface/mutation/utils.mutation.interface";
+import Joi from "joi";
 
-function updateUserFields(userId: string, updateFields: object) {
-    return User.findByIdAndUpdate(
-        userId,
-        {...updateFields, updated: new Date().toISOString()},
-        {new: true}
-    );
+// Fonctions auxiliaires
+function verifyAuthenticatedUser(context: ContextType) {
+    if (!context.userId) throw new Error('You are not authenticated!');
+    return context.userId;
 }
 
-function verifyAuthenticatedUser(context: ContextType) {
-    if (!context.user) throw new Error('You are not authenticated!');
-    return context.user.id
+function generateJwt(userId: string) {
+    return jwt.sign({id: userId}, process.env.SECRET_KEY ?? 'SECRET_KEY', {expiresIn: '1h'});
+}
+
+function manageJwtCookie(context: ContextType, token?: string) {
+    const cookieValue = token ? `jwt=${token}; HttpOnly; Path=/; Max-Age=${60 * 60}` : 'jwt=; HttpOnly; Path=/; Max-Age=0';
+    context.res.setHeader('Set-Cookie', cookieValue);
+}
+
+function validateInput(schema: Joi.ObjectSchema<any>, data: any) {
+    const {error} = schema.validate(data);
+    if (error) throw new Error(`Validation error: ${error.details.map(x => x.message).join(', ')}`);
+}
+
+function updateUserFields(userId: string, updateFields: object) {
+    return User.findByIdAndUpdate(userId, {...updateFields, updated: new Date().toISOString()}, {new: true});
 }
 
 export const resolvers = {
@@ -34,69 +42,56 @@ export const resolvers = {
         },
     },
     Mutation: {
-        signUp: async (_: any, args: { user: UserInterface }, context: ContextType) => {
-            const { error } = signUpValidationSchema.validate(args.user);
-            if (error) throw new Error(`Validation error: ${error.details.map(x => x.message).join(', ')}`);
+        signUp: async (_: any, args: { user: UserInput }) => {
+            validateInput(validationSchemas.signUpValidationSchema, args.user);
             const newUser = new User({
                 ...args.user,
                 created: new Date().toISOString(),
-                updated: new Date().toISOString(),
+                updated: new Date().toISOString()
             });
-            return await newUser.save();
+            return newUser.save();
         },
-        login: async (_: any, {username, password}: QueryArgs, context: ContextType) => {
-            const { error } = loginValidationSchema.validate({username, password});
-            if (error) throw new Error(`Validation error: ${error.details.map(x => x.message).join(', ')}`);
-            const user = await User.findOne({username});
-            if (!user) throw new Error('Invalid credentials!');
-            const isMatch = await bcrypt.compare(password, user.password);
-            if (!isMatch) throw new Error('Invalid credentials!');
+        login: async (_: any, args: { email: string | null, username: string | null, password: string }, context: ContextType) => {
+            const {email, username, password} = args;
+            validateInput(validationSchemas.loginValidationSchema, {email, password});
+            const user = await User.findOne({$or: [{email}, {username}].filter(Boolean)});
+            if (!user || !await bcrypt.compare(password, user.password)) throw new Error('Invalid credentials!');
 
-            const token = jwt.sign({id: user.id}, process.env.SECRET ?? 'SECRET_KEY', {expiresIn: '1h'});
-            context.res.setHeader('Set-Cookie', `jwt=${token}; HttpOnly; Path=/; Max-Age=${60 * 60}`);
-            return token;
+            const token = generateJwt(user._id.toString());
+            manageJwtCookie(context, token);
+
+            return user;
         },
-        logout: (_: any, __: any, {context}: { context: ContextType }) => {
-            verifyAuthenticatedUser(context);
-            context.res.setHeader('Set-Cookie', 'jwt=; HttpOnly; Path=/; Max-Age=0');
+        logout: (_: any, __: any, context: ContextType) => {
+            manageJwtCookie(context);
             return true;
         },
-        updateUser: (_: any, {updateFields}: { updateFields: UpdateUserInput }, context: ContextType) => {
-            const { error } = updateValidationSchema.validate(updateFields);
-            if (error) throw new Error(`Validation error: ${error.details.map(x => x.message).join(', ')}`);
+        updateUser: async (_: any, {updateFields}: { updateFields: UpdateUserInput }, context: ContextType) => {
+            validateInput(validationSchemas.updateValidationSchema, updateFields);
             const userId = verifyAuthenticatedUser(context);
-            return updateUserFields(userId, updateFields);
+            return await updateUserFields(userId, updateFields);
         },
         updatePassword: async (_: any, {password}: { password: string }, context: ContextType) => {
-            const { error } = updatePasswordValidationSchema.validate({password});
-            if (error) throw new Error(`Validation error: ${error.details.map(x => x.message).join(', ')}`);
+            validateInput(validationSchemas.updatePasswordValidationSchema, {password})
             const userId = verifyAuthenticatedUser(context);
             if (!password) throw new Error('Password cannot be empty!');
             const salt = await bcrypt.genSalt(10);
             const hashedPassword = await bcrypt.hash(password, salt);
-            return updateUserFields(userId, {password: hashedPassword});
+            return await updateUserFields(userId, {password: hashedPassword});
         },
-        updateAvatar: (_: any, {avatar}: { avatar: string }, {context}: { context: ContextType }) => {
-            const { error } = updateAvatarValidationSchema.validate({avatar});
-            if (error) throw new Error(`Validation error: ${error.details.map(x => x.message).join(', ')}`);
+        updateLocation: async (_: any, {location}: { location: UpdateLocation }, context: ContextType) => {
+            validateInput(validationSchemas.updateLocationValidationSchema, {location});
             const userId = verifyAuthenticatedUser(context);
-            return updateUserFields(userId, {avatar: avatar});
+            return await updateUserFields(userId, {location: location});
         },
-        updateLocation: (_: any, {location}: { location: any }, {context}: { context: ContextType }) => {
-            const { error } = updateLocationValidationSchema.validate({location});
-            if (error) throw new Error(`Validation error: ${error.details.map(x => x.message).join(', ')}`);
+        updateEmail: async (_: any, {email}: { email: string }, context: ContextType) => {
+            validateInput(validationSchemas.updateEmailValidationSchema, {email})
             const userId = verifyAuthenticatedUser(context);
-            return updateUserFields(userId, {location: location});
+            return await updateUserFields(userId, {email: email});
         },
-        updateEmail: (_: any, {newEmail}: { newEmail: string }, {context}: { context: ContextType }) => {
-            const { error } = updateEmailValidationSchema.validate({newEmail});
-            if (error) throw new Error(`Validation error: ${error.details.map(x => x.message).join(', ')}`);
+        deleteUser: async (_: any, __: any, context: ContextType) => {
             const userId = verifyAuthenticatedUser(context);
-            return updateUserFields(userId, {email: newEmail});
-        },
-        deleteUser: (_: any, __: any, context: ContextType) => {
-            const userId = verifyAuthenticatedUser(context);
-            return User.findByIdAndDelete(userId);
+            return await User.findByIdAndDelete(userId);
         },
     }
 };

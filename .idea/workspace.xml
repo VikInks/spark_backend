@@ -4,7 +4,29 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f87143a6-64d4-439c-8fac-ab819ae73922" name="Changes" comment="" />
+    <list default="true" id="f87143a6-64d4-439c-8fac-ab819ae73922" name="Changes" comment="workspace commit">
+      <change afterPath="$PROJECT_DIR$/main/image/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/image/pnpm-lock.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/image/src/application/graphql/resolver.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/image/src/application/graphql/typeDefs.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/image/src/server.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/image/tsconfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/user/src/infrastructure/authorize/authorized.validation.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/user/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/main/user/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/user/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/main/user/pnpm-lock.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/user/src/application/graphql/resolvers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/user/src/application/graphql/resolvers.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/user/src/application/graphql/typeDefs.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/user/src/application/graphql/typeDefs.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/user/src/domain/config/passport.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/user/src/domain/config/passport.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/user/src/domain/interface/model/user.interface.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/user/src/domain/interface/model/user.interface.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/user/src/domain/interface/mutation/utils.mutation.interface.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/user/src/domain/interface/mutation/utils.mutation.interface.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/user/src/framework/route/auth.route.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/user/src/infrastructure/dataValidation/mutation.validation.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/user/src/infrastructure/dataValidation/mutation.validation.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/user/src/server.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/user/src/server.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/user/test/user.mutation.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/user/test/user.mutation.test.ts" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -15,13 +37,18 @@
       <list>
         <option value="package.json" />
         <option value="tsconfig.json" />
-        <option value="TypeScript File" />
         <option value="Dockerfile" />
         <option value="JavaScript File" />
+        <option value="TypeScript File" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -38,24 +65,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs.jest.jest_package": "D:/Project_ongoing/spark_backend/main/user/node_modules/jest",
-    "nodejs_package_manager_path": "npm",
-    "ts.external.directory.path": "D:\\Project_ongoing\\spark_backend\\main\\user\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;image&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Project_ongoing/spark_backend&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs.jest.jest_package&quot;: &quot;D:/Project_ongoing/spark_backend/main/user/node_modules/jest&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;settings.javascript.prettier&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;D:\\Project_ongoing\\spark_backend\\main\\image\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\Project_ongoing\spark_backend\main\user" />
@@ -65,7 +97,7 @@
       <recent name="D:\Project_ongoing\spark_backend\main\user\framework" />
     </key>
   </component>
-  <component name="RunManager" selected="Jest.User Authentication and Management (1)">
+  <component name="RunManager" selected="npm.start">
     <configuration name="User Authentication and Management (1)" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/main/user/node_modules/jest" />
@@ -78,19 +110,21 @@
       </test-names>
       <method v="2" />
     </configuration>
-    <configuration name="User Authentication and Management" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+    <configuration name="User Authentication and Management.Update email.throws error when unauthenticated user tries to update their own email" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/main/user/node_modules/jest" />
       <working-dir value="$PROJECT_DIR$/main/user" />
       <envs />
-      <scope-kind value="SUITE" />
-      <test-file value="$PROJECT_DIR$/main/user/src/test/user.mutation.test.ts" />
+      <scope-kind value="TEST" />
+      <test-file value="$PROJECT_DIR$/main/user/test/user.mutation.test.ts" />
       <test-names>
         <test-name value="User Authentication and Management" />
+        <test-name value="Update email" />
+        <test-name value="throws error when unauthenticated user tries to update their own email" />
       </test-names>
       <method v="2" />
     </configuration>
-    <configuration name="User Authentication and Management.User login" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+    <configuration name="User Authentication and Management.User logout" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/main/user/node_modules/jest" />
       <working-dir value="$PROJECT_DIR$/main/user" />
@@ -99,15 +133,41 @@
       <test-file value="$PROJECT_DIR$/main/user/test/user.mutation.test.ts" />
       <test-names>
         <test-name value="User Authentication and Management" />
-        <test-name value="User login" />
+        <test-name value="User logout" />
       </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="User Authentication and Management.User logout.logs out the user when authenticated user tries to logout" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/main/user/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/main/user" />
+      <envs />
+      <scope-kind value="TEST" />
+      <test-file value="$PROJECT_DIR$/main/user/test/user.mutation.test.ts" />
+      <test-names>
+        <test-name value="User Authentication and Management" />
+        <test-name value="User logout" />
+        <test-name value="logs out the user when authenticated user tries to logout" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="start" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/main/user/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="start" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="npm.start" />
         <item itemvalue="Jest.User Authentication and Management (1)" />
-        <item itemvalue="Jest.User Authentication and Management.User login" />
-        <item itemvalue="Jest.User Authentication and Management" />
+        <item itemvalue="Jest.User Authentication and Management.User logout" />
+        <item itemvalue="Jest.User Authentication and Management.User logout.logs out the user when authenticated user tries to logout" />
+        <item itemvalue="Jest.User Authentication and Management.Update email.throws error when unauthenticated user tries to update their own email" />
       </list>
     </recent_temporary>
   </component>
@@ -133,7 +193,32 @@
       <workItem from="1701477845585" duration="2437000" />
       <workItem from="1701506829389" duration="1695000" />
       <workItem from="1701511893136" duration="2642000" />
+      <workItem from="1701535829899" duration="8050000" />
+      <workItem from="1701640478083" duration="1305000" />
+      <workItem from="1701688190381" duration="20133000" />
+      <workItem from="1701719873326" duration="634000" />
+      <workItem from="1701768468280" duration="7048000" />
+      <workItem from="1701786324329" duration="7746000" />
+      <workItem from="1701795776695" duration="920000" />
+      <workItem from="1701802661498" duration="1841000" />
+      <workItem from="1701806335919" duration="1493000" />
+      <workItem from="1701852116438" duration="1547000" />
+      <workItem from="1701859880636" duration="1964000" />
+      <workItem from="1701894265174" duration="4258000" />
+      <workItem from="1701952000148" duration="14238000" />
+      <workItem from="1702025224125" duration="3988000" />
+      <workItem from="1702042708986" duration="300000" />
+      <workItem from="1702054731532" duration="1936000" />
     </task>
+    <task id="LOCAL-00001" summary="workspace commit">
+      <option name="closed" value="true" />
+      <created>1701525878225</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1701525878225</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -142,6 +227,11 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="seconde commit" />
-    <option name="LAST_COMMIT_MESSAGE" value="seconde commit" />
+    <MESSAGE value="workspace commit" />
+    <option name="LAST_COMMIT_MESSAGE" value="workspace commit" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>

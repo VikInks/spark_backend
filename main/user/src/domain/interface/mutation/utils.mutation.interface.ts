@@ -1,32 +1,47 @@
 import {IncomingMessage, ServerResponse} from "http";
-import UserInterface from "../model/user.interface";
-
-interface QueryArgs {
-    username: string;
-    password: string;
-}
 
 interface ContextType {
     req: IncomingMessage;
     res: ServerResponse;
-    user?: UserInterface | null;
+    userId?: string | null;
+}
+
+interface QueryArgs {
+    username?: string;
+    email?: string;
+    password: string;
+}
+
+interface UserInput {
+    username: string;
+    password: string;
+    email: string;
+    phone: string;
+    firstName: string;
+    lastName: string;
+    location: {
+        address: string;
+        city: string;
+        state: string;
+        zip: string;
+        country: string;
+    };
 }
 
 interface UpdateUserInput {
     username?: string;
-    password?: string;
-    email?: string;
     phone?: string;
     firstName?: string;
     lastName?: string;
-    avatar?: string;
-    location?: {
-        address?: string;
-        city?: string;
-        state?: string;
-        zip?: string;
-        country?: string;
-    };
+    location?: UpdateLocation;
 }
 
-export {QueryArgs, ContextType, UpdateUserInput};
+interface UpdateLocation {
+    address: string;
+    city: string;
+    state: string;
+    zip: string;
+    country: string;
+}
+
+export {QueryArgs, ContextType, UserInput, UpdateUserInput, UpdateLocation};

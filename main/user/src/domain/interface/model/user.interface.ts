@@ -9,7 +9,6 @@ interface UserInterface {
     username: string
     password: string
     location: LocationInterface
-    avatar: string
     active: boolean
     created: Date
     updated: Date

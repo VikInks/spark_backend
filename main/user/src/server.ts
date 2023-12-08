@@ -1,57 +1,96 @@
+//server.ts
+import express from 'express';
+import http from 'http';
+import session from 'express-session';
+import connectRedis from 'connect-redis';
+import cors from 'cors';
 import {ApolloServer} from '@apollo/server';
-import {startStandaloneServer} from '@apollo/server/standalone';
-import mongoose from 'mongoose';
+import {expressMiddleware} from '@apollo/server/express4';
 import {typeDefs} from './application/graphql/typeDefs';
 import {resolvers} from './application/graphql/resolvers';
-import UserInterface from "./domain/interface/model/user.interface";
-import jwt from "jsonwebtoken";
-import {IncomingMessage, ServerResponse} from "http";
+import mongoose from 'mongoose';
+import {createClient} from 'redis';
+import bodyParser from 'body-parser';
+import jwt, {JwtPayload} from "jsonwebtoken";
+import cookieParser from "cookie-parser";
 
 
-// Connexion à MongoDB
-mongoose.connect('mongodb://user-db:27017/user-service').then(() => {
-    console.log('Connected to MongoDB');
-});
+const REDIS_URL = process.env.REDIS_URL || 'redis://redis-server:6379';
+const MONGO_URL = process.env.MONGO_URL || 'mongodb://user-db:27017/user-service';
+const SESSION_SECRET = process.env.SESSION_SECRET || 'your-session-secret';
 
-// Initialisation de Passport avec la stratégie JWT (à inclure à partir de votre configuration)
-require('./domain/config/passport');
-
-// Définition du type de contexte
-interface ContextType {
-    req: IncomingMessage;
-    res: ServerResponse;
-    user?: UserInterface | null;
+async function configureRedis() {
+    const redisClient = createClient({url: REDIS_URL});
+    await redisClient.connect();
+    return new connectRedis({client: redisClient});
 }
 
-// Création de l'instance Apollo Server
-const server = new ApolloServer<ContextType>({
-    typeDefs,
-    resolvers,
-});
-
-// Fonction pour créer le contexte
-async function createContext({ req, res }: { req: IncomingMessage, res: ServerResponse }): Promise<ContextType> {
-    const token = req.headers.cookie?.split(';').find(c => c.trim().startsWith('jwt='))?.split('=')[1];
-    let user = null;
-
-    if (token) {
-        try {
-            user = jwt.verify(token, process.env.SECRET ?? 'SECRET_KEY') as UserInterface;
-            // Supposons que votre objet UserInterface contienne un attribut id.
-        } catch (error) {
-            console.error("JWT Error:", error);
-            // Si le token est invalide, vous pourriez vouloir nettoyer le cookie ici.
-            res.setHeader('Set-Cookie', 'jwt=; HttpOnly; Path=/; Max-Age=0');
+function configureSession(redisStore: connectRedis) {
+    return session({
+        store: redisStore,
+        secret: SESSION_SECRET,
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 60 * 60 * 1000 // 1 hour
         }
-    }
-
-    return { req, res, user };
+    });
 }
 
-// Démarrage du serveur Apollo avec contexte
-startStandaloneServer(server, {
-    listen: { port: 4001 },
-    context: createContext
-}).then(({ url }) => {
-    console.log(`🚀 Server ready at ${url}`);
-});
+function configureCors() {
+    return cors({
+        origin: 'http://localhost:5173',
+        credentials: true
+    });
+}
+
+function manageJwtCookie({req, res}: { req: express.Request, res: express.Response }, token?: string) {
+    const cookieValue = token ? `jwt=${token}; HttpOnly; Path=/; Max-Age=${60 * 60}` : 'jwt=; HttpOnly; Path=/; Max-Age=0';
+    res.setHeader('Set-Cookie', cookieValue);
+}
+
+async function start() {
+    require('./domain/config/passport');
+    await mongoose.connect(MONGO_URL);
+    console.log('Connected to MongoDB');
+
+    const redisStore = await configureRedis();
+
+    const app = express();
+    app.use(bodyParser.json());
+    app.use(configureSession(redisStore));
+    app.use(configureCors());
+    app.use(cookieParser());
+
+    // Configuration d'ApolloServer
+    const server = new ApolloServer({typeDefs, resolvers});
+    await server.start();
+    app.use('/', expressMiddleware(server, {
+        context: async ({req, res}) => {
+            const token = req.cookies['jwt'] || '';
+            console.log('token: ', token)
+            let userId = null;
+
+            try {
+                if (token) {
+                    const decoded = jwt.verify(token, process.env.SECRET_KEY ?? 'SECRET_KEY') as JwtPayload;
+                    userId = decoded.id;
+                }
+            } catch (error) {
+                console.log('Error in ApolloServer context:', error);
+                manageJwtCookie({req, res});
+            }
+
+            return {req, res, userId};
+        }
+    }));
+
+    const httpServer = http.createServer(app);
+    httpServer.listen({port: 4001}, () => {
+        console.log('🚀 Server ready at http://localhost:4001/');
+    });
+}
+
+start().then(() => console.log('Server User Service started!'));

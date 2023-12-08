@@ -2,12 +2,16 @@ version: '3.8'
 services:
   user-service:
     build: ./main/user
+    volumes:
+      - ./main/user:/usr/src/app
     ports:
       - "4001:4001"
     environment:
       - DB_URI=mongodb://user-db:27017/user-service
+      - REDIS_URL=redis://redis-server:6379
     depends_on:
       - user-db
+      - redis-server
 
   user-db:
     image: mongo
@@ -15,11 +19,18 @@ services:
       - "27017:27017"
     environment:
       - MONGO_INITDB_DATABASE=user-service
+    volumes:
+      - user-db-data:/data/db
+
+  redis-server:
+    image: redis
+    ports:
+      - "6379:6379"
 
   tests:
     build:
-        context: ./main/user
-        dockerfile: Dockerfile.test
+      context: ./main/user
+      dockerfile: Dockerfile.test
     command: npm run test
     depends_on:
       - user-service
