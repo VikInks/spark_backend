@@ -70,7 +70,6 @@ async function start() {
     app.use('/', expressMiddleware(server, {
         context: async ({req, res}) => {
             const token = req.cookies['jwt'] || '';
-            console.log('token: ', token)
             let userId = null;
 
             try {
