@@ -4,9 +4,25 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f87143a6-64d4-439c-8fac-ab819ae73922" name="Changes" comment="(backend/user): User service done">
+    <list default="true" id="f87143a6-64d4-439c-8fac-ab819ae73922" name="Changes" comment="(backend/user): clean code">
+      <change afterPath="$PROJECT_DIR$/main/image/src/application/graphql/resolvers.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/image/src/domain/config/passport.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/image/src/infrastructure/model/image.model.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/parking/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/parking/pnpm-lock.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/parking/src/application/graphql/resolvers.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/parking/src/application/graphql/typeDefs.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/parking/src/babel.config.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/parking/src/server.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/parking/tsconfig.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/user/src/server.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/user/src/server.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/image/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/main/image/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/image/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/main/image/pnpm-lock.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/image/src/application/graphql/resolver.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/image/src/infrastructure/dataValidation/mutation.validation.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/image/src/application/graphql/typeDefs.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/image/src/application/graphql/typeDefs.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/image/src/server.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/image/src/server.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/image/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/main/image/tsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/user/src/domain/interface/mutation/utils.mutation.interface.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/user/src/domain/interface/mutation/utils.mutation.interface.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,7 +71,7 @@
     &quot;git-widget-placeholder&quot;: &quot;image&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/Project_ongoing/spark_backend&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Project_ongoing/spark_backend/main/image/src/domain/config&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -65,17 +81,21 @@
     &quot;nodejs.jest.jest_package&quot;: &quot;D:/Project_ongoing/spark_backend/main/user/node_modules/jest&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;settings.javascript.prettier&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;D:\\Project_ongoing\\spark_backend\\main\\image\\node_modules\\typescript\\lib&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;D:\\Project_ongoing\\spark_backend\\main\\parking\\node_modules\\typescript\\lib&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Project_ongoing\spark_backend\main\image\src\domain\config" />
+      <recent name="D:\Project_ongoing\spark_backend\main\parking\src" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Project_ongoing\spark_backend\main\parking\src" />
       <recent name="D:\Project_ongoing\spark_backend\main\user" />
       <recent name="D:\Project_ongoing\spark_backend\main\user\apollo_mutation" />
       <recent name="D:\Project_ongoing\spark_backend\main\user\src" />
       <recent name="D:\Project_ongoing\spark_backend" />
-      <recent name="D:\Project_ongoing\spark_backend\main\user\framework" />
     </key>
   </component>
   <component name="RunManager" selected="npm.start">
@@ -189,7 +209,8 @@
       <workItem from="1701952000148" duration="14238000" />
       <workItem from="1702025224125" duration="3988000" />
       <workItem from="1702042708986" duration="300000" />
-      <workItem from="1702054731532" duration="2903000" />
+      <workItem from="1702054731532" duration="9673000" />
+      <workItem from="1702078914954" duration="4146000" />
     </task>
     <task id="LOCAL-00001" summary="workspace commit">
       <option name="closed" value="true" />
@@ -207,7 +228,15 @@
       <option name="project" value="LOCAL" />
       <updated>1702057521985</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="(backend/user): clean code">
+      <option name="closed" value="true" />
+      <created>1702057727252</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1702057727252</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -218,7 +247,8 @@
     <MESSAGE value="seconde commit" />
     <MESSAGE value="workspace commit" />
     <MESSAGE value="(backend/user): User service done" />
-    <option name="LAST_COMMIT_MESSAGE" value="(backend/user): User service done" />
+    <MESSAGE value="(backend/user): clean code" />
+    <option name="LAST_COMMIT_MESSAGE" value="(backend/user): clean code" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

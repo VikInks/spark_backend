@@ -6,12 +6,6 @@ interface ContextType {
     userId?: string | null;
 }
 
-interface QueryArgs {
-    username?: string;
-    email?: string;
-    password: string;
-}
-
 interface UserInput {
     username: string;
     password: string;
@@ -44,4 +38,4 @@ interface UpdateLocation {
     country: string;
 }
 
-export {QueryArgs, ContextType, UserInput, UpdateUserInput, UpdateLocation};
+export {ContextType, UserInput, UpdateUserInput, UpdateLocation};
