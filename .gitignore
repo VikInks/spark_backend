@@ -1,8 +1,3 @@
-/main/user/node_modules/
-/main/user/apollo_mutation/
 /node_modules/
-<<<<<<< HEAD
 /.idea/
-=======
->>>>>>> master
-/main/image/node_modules/
+/main/service/user/apollo_mutation/
