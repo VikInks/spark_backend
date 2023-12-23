@@ -4,7 +4,24 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f87143a6-64d4-439c-8fac-ab819ae73922" name="Changes" comment="" />
+    <list default="true" id="f87143a6-64d4-439c-8fac-ab819ae73922" name="Changes" comment="refactor(backend): change from multi app to mono app  &#10;&#10;complete refactor of the app, finish user resolvers">
+      <change afterPath="$PROJECT_DIR$/main/service/utils/exception.handler.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/service/utils/redis.handler.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/service/utils/respond.status.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/service/utils/validate.response.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/server.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/server.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/service/base/interface/context.type.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/service/base/interface/contextType.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/service/services/image/function.utils.resolver.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/service/services/image/function.utils.resolver.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/service/services/image/graphql/resolvers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/service/services/image/graphql/resolvers.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/service/services/image/graphql/typeDefs.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/service/services/image/graphql/typeDefs.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/service/services/user/graphql/resolvers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/service/services/user/graphql/resolvers.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/service/services/user/graphql/typeDefs.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/service/services/user/graphql/typeDefs.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/service/services/user/utils/function.utils.resolvers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/service/services/user/utils/function.utils.resolvers.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/service/utils/token.management.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/service/utils/token.management.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/service/utils/validate.input.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/service/utils/validate.input.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/service/utils/verify.authenticated.user.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/service/utils/verify.authenticated.user.ts" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -15,15 +32,23 @@
       <list>
         <option value="package.json" />
         <option value="tsconfig.json" />
-        <option value="TypeScript File" />
-        <option value="Dockerfile" />
         <option value="JavaScript File" />
+        <option value="Dockerfile" />
+        <option value="TypeScript File" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
@@ -38,34 +63,48 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs.jest.jest_package": "D:/Project_ongoing/spark_backend/main/user/node_modules/jest",
-    "nodejs_package_manager_path": "npm",
-    "ts.external.directory.path": "D:\\Project_ongoing\\spark_backend\\main\\user\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;image&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;javascript.nodejs.core.library.configured.version&quot;: &quot;21.2.0&quot;,
+    &quot;javascript.nodejs.core.library.typings.version&quot;: &quot;20.10.4&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Project_ongoing/spark_backend/main/image/src/domain&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs.jest.jest_package&quot;: &quot;D:/Project_ongoing/spark_backend/main/user/node_modules/jest&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;settings.jsgraphql&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;D:\\Project_ongoing\\spark_backend\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Project_ongoing\spark_backend\main\image\src\domain" />
+      <recent name="D:\Project_ongoing\spark_backend\main\image\src\infrastructure\authorize" />
+      <recent name="D:\Project_ongoing\spark_backend\main\image\src\domain\config" />
+      <recent name="D:\Project_ongoing\spark_backend\main\image\src\framework" />
+      <recent name="D:\Project_ongoing\spark_backend\main\image" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\Project_ongoing\spark_backend\main\user" />
-      <recent name="D:\Project_ongoing\spark_backend\main\user\apollo_mutation" />
-      <recent name="D:\Project_ongoing\spark_backend\main\user\src" />
-      <recent name="D:\Project_ongoing\spark_backend" />
-      <recent name="D:\Project_ongoing\spark_backend\main\user\framework" />
+      <recent name="D:\Project_ongoing\spark_backend\main\service\utils" />
+      <recent name="D:\Project_ongoing\spark_backend\main\service\services" />
+      <recent name="D:\Project_ongoing\spark_backend\main\service\image\graphql" />
+      <recent name="D:\Project_ongoing\spark_backend\main\test" />
+      <recent name="D:\Project_ongoing\spark_backend\main\service\user\utils" />
     </key>
   </component>
-  <component name="RunManager" selected="Jest.User Authentication and Management (1)">
+  <component name="RunManager" selected="npm.start">
     <configuration name="User Authentication and Management (1)" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/main/user/node_modules/jest" />
@@ -78,19 +117,21 @@
       </test-names>
       <method v="2" />
     </configuration>
-    <configuration name="User Authentication and Management" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+    <configuration name="User Authentication and Management.Update email.throws error when unauthenticated user tries to update their own email" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/main/user/node_modules/jest" />
       <working-dir value="$PROJECT_DIR$/main/user" />
       <envs />
-      <scope-kind value="SUITE" />
-      <test-file value="$PROJECT_DIR$/main/user/src/test/user.mutation.test.ts" />
+      <scope-kind value="TEST" />
+      <test-file value="$PROJECT_DIR$/main/user/test/user.mutation.test.ts" />
       <test-names>
         <test-name value="User Authentication and Management" />
+        <test-name value="Update email" />
+        <test-name value="throws error when unauthenticated user tries to update their own email" />
       </test-names>
       <method v="2" />
     </configuration>
-    <configuration name="User Authentication and Management.User login" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+    <configuration name="User Authentication and Management.User logout" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/main/user/node_modules/jest" />
       <working-dir value="$PROJECT_DIR$/main/user" />
@@ -99,15 +140,41 @@
       <test-file value="$PROJECT_DIR$/main/user/test/user.mutation.test.ts" />
       <test-names>
         <test-name value="User Authentication and Management" />
-        <test-name value="User login" />
+        <test-name value="User logout" />
       </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="User Authentication and Management.User logout.logs out the user when authenticated user tries to logout" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/main/user/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/main/user" />
+      <envs />
+      <scope-kind value="TEST" />
+      <test-file value="$PROJECT_DIR$/main/user/test/user.mutation.test.ts" />
+      <test-names>
+        <test-name value="User Authentication and Management" />
+        <test-name value="User logout" />
+        <test-name value="logs out the user when authenticated user tries to logout" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="start" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/main/user/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="start" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="npm.start" />
         <item itemvalue="Jest.User Authentication and Management (1)" />
-        <item itemvalue="Jest.User Authentication and Management.User login" />
-        <item itemvalue="Jest.User Authentication and Management" />
+        <item itemvalue="Jest.User Authentication and Management.User logout" />
+        <item itemvalue="Jest.User Authentication and Management.User logout.logs out the user when authenticated user tries to logout" />
+        <item itemvalue="Jest.User Authentication and Management.Update email.throws error when unauthenticated user tries to update their own email" />
       </list>
     </recent_temporary>
   </component>
@@ -133,7 +200,103 @@
       <workItem from="1701477845585" duration="2437000" />
       <workItem from="1701506829389" duration="1695000" />
       <workItem from="1701511893136" duration="2642000" />
+      <workItem from="1701535829899" duration="8050000" />
+      <workItem from="1701640478083" duration="1305000" />
+      <workItem from="1701688190381" duration="20133000" />
+      <workItem from="1701719873326" duration="634000" />
+      <workItem from="1701768468280" duration="7048000" />
+      <workItem from="1701786324329" duration="7746000" />
+      <workItem from="1701795776695" duration="920000" />
+      <workItem from="1701802661498" duration="1841000" />
+      <workItem from="1701806335919" duration="1493000" />
+      <workItem from="1701852116438" duration="1547000" />
+      <workItem from="1701859880636" duration="1964000" />
+      <workItem from="1701894265174" duration="4258000" />
+      <workItem from="1701952000148" duration="14238000" />
+      <workItem from="1702025224125" duration="3988000" />
+      <workItem from="1702042708986" duration="300000" />
+      <workItem from="1702054731532" duration="9673000" />
+      <workItem from="1702078914954" duration="5422000" />
+      <workItem from="1702122752636" duration="7414000" />
+      <workItem from="1702150502704" duration="2988000" />
+      <workItem from="1702220582421" duration="4697000" />
+      <workItem from="1702251633513" duration="377000" />
+      <workItem from="1702252032869" duration="3854000" />
+      <workItem from="1702289268177" duration="3283000" />
+      <workItem from="1702315242285" duration="679000" />
+      <workItem from="1702375788333" duration="4884000" />
+      <workItem from="1702420737795" duration="693000" />
+      <workItem from="1702473674025" duration="419000" />
+      <workItem from="1702474153780" duration="1797000" />
+      <workItem from="1702516732787" duration="749000" />
+      <workItem from="1702556889188" duration="4146000" />
+      <workItem from="1702632433633" duration="66000" />
+      <workItem from="1702632510821" duration="4410000" />
+      <workItem from="1702734782467" duration="4143000" />
+      <workItem from="1702739699858" duration="30000" />
+      <workItem from="1702739777018" duration="4508000" />
+      <workItem from="1702744486948" duration="2470000" />
+      <workItem from="1702746978098" duration="8289000" />
+      <workItem from="1702909201162" duration="5665000" />
+      <workItem from="1702929998506" duration="926000" />
+      <workItem from="1702933636658" duration="2418000" />
+      <workItem from="1702978195948" duration="2761000" />
+      <workItem from="1702984678967" duration="2500000" />
+      <workItem from="1702989966987" duration="708000" />
+      <workItem from="1703078522821" duration="2168000" />
+      <workItem from="1703085115157" duration="3799000" />
+      <workItem from="1703101796383" duration="7888000" />
+      <workItem from="1703147034683" duration="2998000" />
+      <workItem from="1703157964083" duration="6120000" />
+      <workItem from="1703173816758" duration="2557000" />
+      <workItem from="1703185133885" duration="1448000" />
+      <workItem from="1703231277449" duration="5789000" />
+      <workItem from="1703281764629" duration="5521000" />
+      <workItem from="1703329847210" duration="2649000" />
+      <workItem from="1703356376321" duration="2349000" />
+      <workItem from="1703366254310" duration="3742000" />
     </task>
+    <task id="LOCAL-00001" summary="workspace commit">
+      <option name="closed" value="true" />
+      <created>1701525878225</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1701525878225</updated>
+    </task>
+    <task id="LOCAL-00002" summary="(backend/user): User service done">
+      <option name="closed" value="true" />
+      <created>1702057521985</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1702057521985</updated>
+    </task>
+    <task id="LOCAL-00003" summary="(backend/user): clean code">
+      <option name="closed" value="true" />
+      <created>1702057727252</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1702057727252</updated>
+    </task>
+    <task id="LOCAL-00004" summary="(backend/image): first commit">
+      <option name="closed" value="true" />
+      <created>1702083750007</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1702083750007</updated>
+    </task>
+    <task id="LOCAL-00005" summary="refactor(backend): change from multi app to mono app  &#10;&#10;complete refactor of the app, finish user resolvers">
+      <option name="closed" value="true" />
+      <created>1703162996017</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1703162996017</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -142,6 +305,15 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="seconde commit" />
-    <option name="LAST_COMMIT_MESSAGE" value="seconde commit" />
+    <MESSAGE value="workspace commit" />
+    <MESSAGE value="(backend/user): User service done" />
+    <MESSAGE value="(backend/user): clean code" />
+    <MESSAGE value="(backend/image): first commit" />
+    <MESSAGE value="refactor(backend): change from multi app to mono app  &#10;&#10;complete refactor of the app, finish user resolvers" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor(backend): change from multi app to mono app  &#10;&#10;complete refactor of the app, finish user resolvers" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>

@@ -1,28 +1,31 @@
 version: '3.8'
 services:
-  user-service:
-    build: ./main/user
+  server:
+    build: .
+    volumes:
+      - .:/usr/src/app
     ports:
-      - "4001:4001"
-    environment:
-      - DB_URI=mongodb://user-db:27017/user-service
+      - "4000:4000"
     depends_on:
-      - user-db
+      - db
+      - redis-server
 
-  user-db:
+  db:
     image: mongo
     ports:
       - "27017:27017"
     environment:
-      - MONGO_INITDB_DATABASE=user-service
+      MONGO_INITDB_DATABASE: spark
+    volumes:
+      - spark-db-data:/data/db
 
-  tests:
-    build:
-        context: ./main/user
-        dockerfile: Dockerfile.test
-    command: npm run test
-    depends_on:
-      - user-service
+  redis-server:
+    image: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
 
 volumes:
-  user-db-data:
+  spark-db-data:
+  redis-data:
