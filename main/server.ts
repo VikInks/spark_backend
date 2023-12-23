@@ -13,7 +13,7 @@ import mongoose from "mongoose";
 import bodyParser from 'body-parser';
 import {configureCors} from "./config/cors";
 import {configureRedis, configureSession} from "./service/utils/redis/redis";
-import {ContextType} from "./service/base/interface/context.type";
+import {contextType} from "./service/base/interface/contextType";
 import {manageCookie} from "./service/utils/token.management";
 
 const aggregateResolvers = [UserResolvers, ImageResolvers];
@@ -51,7 +51,7 @@ async function start() {
 
     const httpServer = http.createServer(app);
 
-    const server = new ApolloServer<ContextType>({
+    const server = new ApolloServer<contextType>({
         typeDefs: aggregateTypeDefs,
         resolvers: aggregateResolvers,
         plugins: [ApolloServerPluginDrainHttpServer({httpServer})]
@@ -62,7 +62,7 @@ async function start() {
     app.use(
         '/',
         expressMiddleware(server, {
-            context: async ({req, res}: ContextType) => {
+            context: async ({req, res}: contextType) => {
                 const token = req.headers.cookie?.split(';').find(c => c.trim().startsWith('jwt='))?.split('=')[1];
                 let user = null;
 

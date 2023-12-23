@@ -6,27 +6,18 @@ import {
     UpdateUserInput,
     UserInput
 } from "../model/interface/mutation/utils.mutation.interface";
-import {manageCookie} from "../../../utils/token.management";
 import {
-    generateJwt,
-    updateUserFields,
+    generateJwt, manageSessionAndCookie,
+    updateUserFields, verifyPasswordValidity,
 } from "../utils/function.utils.resolvers";
-import {SessionWatcher} from "../../../utils/session.watcher";
 import {generateUniqueId} from "../../../utils/uuid/generate.unique.id";
 import {getRedisClient} from "../../../utils/redis/redis";
-import {ContextType} from "../../../base/interface/context.type";
-import {validateInput} from "../../../utils/validate.input";
+import {contextType} from "../../../base/interface/contextType";
 import {verifyAuthenticatedUser} from "../../../utils/verify.authenticated.user";
-
-const exceptionHandler = (operation: string, e: unknown) => {
-    if (e instanceof Error) {
-        console.log(e);
-        return {success: false, message: `Error while ${operation}: ${e.message}`};
-    } else {
-        console.log(e);
-        return {success: false, message: `Error while ${operation}: ${e}`};
-    }
-}
+import {exceptionHandler} from "../../../utils/exception.handler";
+import {respondWithStatus} from "../../../utils/respond.status";
+import {validateAndResponse} from "../../../utils/validate.response";
+import {redisHandler} from "../../../utils/redis.handler";
 
 /**
  * A collection of resolvers for handling GraphQL queries and mutations related to users.
@@ -42,22 +33,19 @@ export const resolvers = {
          * @param context - The context object which contains information about the current request.
          * @returns An object indicating the success or failure of the operation, along with a message.
          */
-        me: async (_: any, __: any, context: ContextType) => {
+        me: async (_: any, __: any, context: contextType) => {
             const userId = verifyAuthenticatedUser(context);
             try {
                 const user = await User.findById(userId);
                 try {
-                    const sessionMiddleware = SessionWatcher(userId, {user: user});
-                    await sessionMiddleware(context.req, context.res, () => {
-                        console.log('SessionWatcher: ', userId, {user: user});
-                    });
+                    await manageSessionAndCookie(userId, context, {user: user}, 'fetching user');
                 } catch (e) {
-                    return exceptionHandler('managing session', e);
+                    return exceptionHandler('managing session', e, context);
                 }
                 console.log('user', user);
-                return {success: true, message: 'User fetched successfully!'};
+                return respondWithStatus(200, 'User fetched successfully!', true, context);
             } catch (e) {
-                return exceptionHandler('fetching user', e);
+                return exceptionHandler('fetching user', e, context);
             }
         },
     },
@@ -68,31 +56,34 @@ export const resolvers = {
          * @async
          * @param {Object} _ - Unused parameter.
          * @param {Object} args - The user input.
+         * @param context - The context object containing the request and response objects.
          * @param {Object} args.user - The user object containing the user details.
          * @param {string} args.user.email - The email of the user.
          * @param {string} args.user.username - The username of the user.
          * @returns Promise{Object} - The result of the sign-up operation.
          * @throws {Error} - If the user already exists.
          */
-        signUp: async (_: any, args: { user: UserInput }) => {
-            validateInput(validationSchemas.signUpValidationSchema, args.user);
-            // check if user already exists
-            try {
-                const user = await User.findOne({$or: [{email: args.user.email}, {username: args.user.username}]});
-                if (user) throw new Error(`User already exists! ${user.email === args.user.email ? 'Email' : 'Username'} already used!`);
-                const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$/;
-                if (!passwordRegex.test(args.user.password)) throw new Error(
-                    'Password must be at least 8 characters long, and contain at least one uppercase letter, one lowercase letter, one number and one special character!'
-                );
-                new User({
-                    ...args.user,
-                    created: new Date().toISOString(),
-                    updated: new Date().toISOString()
-                });
-                return {success: true, message: 'User created successfully!'}
-            } catch (e) {
-                return exceptionHandler('creating user', e);
-            }
+        signUp: async (_: any, args: { user: UserInput }, context: contextType) => {
+            return validateAndResponse(validationSchemas.signUpValidationSchema, args.user, 'sign up user', context, async () => {
+                try {
+                    const user = await User.findOne({$or: [{email: args.user.email}, {username: args.user.username}]});
+                    if (user) return respondWithStatus(401, 'User already exists!', false, context);
+                    verifyPasswordValidity(args.user.password, context);
+                    const newUser = new User({
+                        ...args.user,
+                        created: new Date().toISOString(),
+                        updated: new Date().toISOString()
+                    });
+                    try {
+                        await newUser.save();
+                        return respondWithStatus(201, 'User created successfully!', true, context);
+                    } catch (e) {
+                        return exceptionHandler('saving user', e, context);
+                    }
+                } catch (e) {
+                    return exceptionHandler('creating user', e, context);
+                }
+            });
         },
         /**
          * Logs in a user with the provided email/username and password.
@@ -111,28 +102,29 @@ export const resolvers = {
             email: string | null,
             username: string | null,
             password: string
-        }, context: ContextType) => {
+        }, context: contextType) => {
             const {email, username, password} = args;
-            validateInput(validationSchemas.loginValidationSchema, {email, username, password});
-            try {
-                const user = await User.findOne({$or: [{email}, {username}].filter(Boolean)});
-                if (!user || !await bcrypt.compare(password, user.password)) throw new Error('Invalid credentials!');
-                const token = generateJwt(user._id.toString());
-                const sessionId = generateUniqueId();
+            return validateAndResponse(validationSchemas.loginValidationSchema, {email, username, password}, 'login user', context, async () => {
                 try {
-                    manageCookie(context, token, sessionId, 'login');
+                    const user = await User.findOne({$or: [{email}, {username}].filter(Boolean)});
+                    if (!user || !await bcrypt.compare(password, user.password)) return respondWithStatus(401, 'Invalid credentials!', false, context);
+                    const token = generateJwt(user._id.toString());
+                    const sessionId = generateUniqueId();
+                    try {
+                        await manageSessionAndCookie(user._id.toString(), context, {user: user}, 'logging in user', 'login');
+                    } catch (e) {
+                        return exceptionHandler('managing cookie', e, context);
+                    }
+                    try {
+                        await redisHandler(context,'new', {ud: user._id.toString(), ...user}, sessionId);
+                    } catch (e) {
+                        return exceptionHandler('setting redis session', e, context);
+                    }
+                    return {success: true, message: 'User logged in successfully!'};
                 } catch (e) {
-                    return exceptionHandler('managing cookie', e);
+                    return exceptionHandler('logging in user', e, context);
                 }
-                try {
-                    await getRedisClient().set(sessionId, JSON.stringify({userId: user._id.toString(), ...user}));
-                } catch (e) {
-                    return exceptionHandler('setting redis session', e);
-                }
-                return {success: true, message: 'User logged in successfully!'};
-            } catch (e) {
-                return exceptionHandler('logging in user', e);
-            }
+            });
         },
         /**
          * Logs out the authenticated user.
@@ -143,25 +135,17 @@ export const resolvers = {
          * @param context - An object containing the request and response context.
          * @returns An object with a success status and a message indicating the result of the logout operation.
          */
-        logout: async (_: any, __: any, context: ContextType) => {
+        logout: async (_: any, __: any, context: contextType) => {
             const userId = verifyAuthenticatedUser(context);
             try {
-                manageCookie(context, _, _, 'logout');
-            } catch (e) {
-                return exceptionHandler('managing cookie', e);
-            }
-            try {
                 try {
-                    const sessionMiddleware = SessionWatcher(userId, {user: null}, 'delete');
-                    await sessionMiddleware(context.req, context.res, () => {
-                        console.log('SessionWatcher: ', context, {user: null});
-                    });
+                    await manageSessionAndCookie(userId, context, {user: null}, 'logging out user', 'delete');
                 } catch (e) {
-                    return exceptionHandler('managing session', e);
+                    return exceptionHandler('managing session', e, context);
                 }
-                return {success: true, message: 'User logged out successfully!'};
+                return respondWithStatus(200, 'User logged out successfully!', true, context);
             } catch (e) {
-                return exceptionHandler('logging out user', e);
+                return exceptionHandler('logging out user', e, context);
             }
         },
         /**
@@ -173,24 +157,22 @@ export const resolvers = {
          * @param context - The context object containing request and response.
          * @returns An object indicating the success of the update and a corresponding message.
          */
-        updateUser: async (_: any, {updateFields}: { updateFields: UpdateUserInput }, context: ContextType) => {
-            validateInput(validationSchemas.updateValidationSchema, updateFields);
-            const userId = verifyAuthenticatedUser(context);
-            try {
-                const updatedSessionData = {user: {...updateFields}};
-                await updateUserFields(userId, updateFields);
+        updateUser: async (_: any, {updateFields}: { updateFields: UpdateUserInput }, context: contextType) => {
+            return validateAndResponse(validationSchemas.updateValidationSchema, {updateFields}, 'update user', context, async () => {
+                const userId = verifyAuthenticatedUser(context);
                 try {
-                    const sessionMiddleware = SessionWatcher(userId, updatedSessionData);
-                    await sessionMiddleware(context.req, context.res, () => {
-                        console.log('SessionWatcher: ', userId, updatedSessionData);
-                    });
+                    const updatedSessionData = {user: {...updateFields}};
+                    await updateUserFields(userId, updateFields);
+                    try {
+                        await manageSessionAndCookie(userId, context, updatedSessionData, 'updating user');
+                    } catch (e) {
+                        return exceptionHandler('managing session', e, context);
+                    }
+                    return respondWithStatus(200, 'User updated successfully!', true, context);
                 } catch (e) {
-                    return exceptionHandler('managing session', e);
+                    return exceptionHandler('updating user', e, context);
                 }
-                return {success: true, message: 'User updated successfully!'};
-            } catch (e) {
-                return exceptionHandler('updating user', e);
-            }
+            });
         },
         /**
          * Updates the password for the authenticated user.
@@ -199,39 +181,34 @@ export const resolvers = {
          * @param {any} _ - The placeholder for the root value.
          * @param {Object} params - The parameters for the mutation.
          * @param {string} params.password - The new password to be set.
-         * @param {ContextType} context - The context object containing the request, response, and other information.
+         * @param {contextType} context - The context object containing the request, response, and other information.
          * @throws {Error} If the password is empty.
          * @throws {Error} If the user associated with the authenticated user ID is not found.
          * @throws {Error} If the new password is the same as the old one.
          * @throws {Error} If the password does not meet the required complexity.
          */
-        updatePassword: async (_: any, {password}: { password: string }, context: ContextType) => {
-            validateInput(validationSchemas.updatePasswordValidationSchema, {password});
-            if (!password) throw new Error('Password cannot be empty!');
-            const userId = verifyAuthenticatedUser(context);
-            try {
-                const user = await User.findById(userId);
-                if (!user) throw new Error('User not found!');
-                if (await bcrypt.compare(password, user.password)) throw new Error('New password cannot be the same as the old one!');
-                const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$/;
-                if (!passwordRegex.test(password)) throw new Error(
-                    'Password must be at least 8 characters long, and contain at least one uppercase letter, one lowercase letter, one number and one special character!'
-                );
-                const salt = await bcrypt.genSalt(10);
-                const hashedPassword = await bcrypt.hash(password, salt);
-                await updateUserFields(userId, {password: hashedPassword});
+        updatePassword: async (_: any, {password}: { password: string }, context: contextType) => {
+            return validateAndResponse(validationSchemas.updatePasswordValidationSchema, {password}, 'update password', context, async () => {
+                if (!password) return respondWithStatus(401, 'Password cannot be empty!', false, context);
+                const userId = verifyAuthenticatedUser(context);
                 try {
-                    const sessionMiddleware = SessionWatcher(userId, {user: {password: hashedPassword}});
-                    await sessionMiddleware(context.req, context.res, () => {
-                        console.log('SessionWatcher: ', userId, {user: {password: hashedPassword}});
-                    });
+                    const user = await User.findById(userId);
+                    if (!user) return respondWithStatus(404, 'User not found!', false, context);
+                    if (await bcrypt.compare(password, user.password)) return respondWithStatus(401, 'New password cannot be the same as the old one!', false, context);
+                    verifyPasswordValidity(password, context);
+                    const salt = await bcrypt.genSalt(10);
+                    const hashedPassword = await bcrypt.hash(password, salt);
+                    await updateUserFields(userId, {password: hashedPassword});
+                    try {
+                        await manageSessionAndCookie(userId, context, {user: {password: hashedPassword}}, 'updating password');
+                    } catch (e) {
+                        return exceptionHandler('managing session', e, context);
+                    }
+                    return respondWithStatus(200, 'Password updated successfully!', true, context);
                 } catch (e) {
-                    return exceptionHandler('managing session', e);
+                    return exceptionHandler('updating password', e, context);
                 }
-                return {success: true, message: 'Password updated successfully!'};
-            } catch (e) {
-                return exceptionHandler('updating password', e);
-            }
+            });
         },
         /**
          * Update the location of a user.
@@ -242,23 +219,21 @@ export const resolvers = {
          * @param {Object} context - The context object containing the request and response objects.
          * @throws {Error} - If there is an error updating the location.
          */
-        updateLocation: async (_: any, {location}: { location: UpdateLocation }, context: ContextType) => {
-            validateInput(validationSchemas.updateLocationValidationSchema, {location});
-            const userId = verifyAuthenticatedUser(context);
-            try {
-                await updateUserFields(userId, {location: location});
+        updateLocation: async (_: any, {location}: { location: UpdateLocation }, context: contextType) => {
+            return validateAndResponse(validationSchemas.updateLocationValidationSchema, {location}, 'update location', context, async () => {
+                const userId = verifyAuthenticatedUser(context);
                 try {
-                    const sessionMiddleware = SessionWatcher(userId, {user: {location: location}});
-                    await sessionMiddleware(context.req, context.res, () => {
-                        console.log('SessionWatcher: ', userId, {user: {location: location}});
-                    });
+                    await updateUserFields(userId, {location: location});
+                    try {
+                        await manageSessionAndCookie(userId, context, {user: {location: location}}, 'updating location');
+                    } catch (e) {
+                        return exceptionHandler('managing session', e, context);
+                    }
+                    return respondWithStatus(200, 'Location updated successfully!', true, context);
                 } catch (e) {
-                    return exceptionHandler('managing session', e);
+                    return exceptionHandler('updating location', e, context);
                 }
-                return {success: true, message: 'Location updated successfully!'};
-            } catch (e) {
-                return exceptionHandler('updating location', e);
-            }
+            });
         },
         /**
          * Updates the email of the authenticated user.
@@ -270,27 +245,25 @@ export const resolvers = {
          *
          * @returns An object containing the success status and a message
          */
-        updateEmail: async (_: any, {email}: { email: string }, context: ContextType) => {
-            validateInput(validationSchemas.updateEmailValidationSchema, {email})
-            const userId = verifyAuthenticatedUser(context);
-            try {
-                const user = await User.findOne({email});
-                if (user) throw new Error('Email already used!');
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(email)) throw new Error('Invalid email!');
-                await updateUserFields(userId, {email: email});
+        updateEmail: async (_: any, {email}: { email: string }, context: contextType) => {
+            return validateAndResponse(validationSchemas.updateEmailValidationSchema, {email}, 'update email', context, async () => {
+                const userId = verifyAuthenticatedUser(context);
                 try {
-                    const sessionMiddleware = SessionWatcher(userId, {user: {email: email}});
-                    await sessionMiddleware(context.req, context.res, () => {
-                        console.log('SessionWatcher: ', userId, {user: {email: email}});
-                    });
+                    const user = await User.findOne({email});
+                    if (user) return respondWithStatus(401, 'Email already exists!', false, context);
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(email)) return respondWithStatus(401, 'Invalid email!', false, context);
+                    await updateUserFields(userId, {email: email});
+                    try {
+                        await manageSessionAndCookie(userId, context, {user: {email: email}}, 'updating email');
+                    } catch (e) {
+                        return exceptionHandler('managing session', e, context);
+                    }
+                    return respondWithStatus(200, 'Email updated successfully!', true, context);
                 } catch (e) {
-                    return exceptionHandler('managing session', e);
+                    return exceptionHandler('updating email', e, context);
                 }
-                return {success: true, message: 'Email updated successfully!'};
-            } catch (e) {
-                return exceptionHandler('updating email', e);
-            }
+            });
         },
         /**
          * Updates the active status of a user.
@@ -299,27 +272,26 @@ export const resolvers = {
          * @param {any} _ - The ignored parameter.
          * @param {any} __ - The ignored parameter.
          * @param {object} context - The context object.
-         * @returns {object} - The result object containing success and message properties.
          * @throws {Error} - If there is an error while updating the active status.
          */
-        updateActive: async (_: any, __: any, context: ContextType) => {
+        updateActive: async (_: any, __: any, context: contextType) => {
             const userId = verifyAuthenticatedUser(context);
-            try {
-                const active = !User.findById(userId).get('active');
-                await updateUserFields(userId, {active: active});
-                try {
-                    const sessionMiddleware = SessionWatcher(userId, {user: {active: active}}, !active ? 'delete' : '');
-                    await sessionMiddleware(context.req, context.res, () => {
-                        console.log('SessionWatcher: ', userId, {user: {active: active}});
-                    });
-                } catch (e) {
-                    return exceptionHandler('managing session', e);
+            return validateAndResponse(null, null, 'updating active status', context, async () => {
+                const user = await User.findById(userId);
+                if (!user) {
+                    return respondWithStatus(404, 'User not found!', false, context);
                 }
-                !active ? manageCookie(context.res, _, _, 'delete') : null;
-                return {success: true, message: 'Active status updated successfully!'};
-            } catch (e) {
-                return exceptionHandler('updating active status', e);
-            }
+                const active = !user.active;
+                await updateUserFields(userId, { active: active });
+                await manageSessionAndCookie(
+                    userId,
+                    context,
+                    { user: { active: active } },
+                    'managing session',
+                    !active ? 'delete' : ''
+                );
+                return respondWithStatus(200, 'Active status updated successfully!', true, context);
+            });
         },
         /**
          * Deletes a user from the database and logs out the user's session.
@@ -330,27 +302,18 @@ export const resolvers = {
          * @param context - The context object containing the request and response objects.
          * @returns - An object indicating the success of the user deletion and an associated message.
          */
-        deleteUser: async (_: any, __: any, context: ContextType) => {
-            try {
-                const userId = verifyAuthenticatedUser(context);
+        deleteUser: async (_: any, __: any, context: contextType) => {
+            const userId = verifyAuthenticatedUser(context);
+
+            return validateAndResponse(null, null, 'deleting user', context, async () => {
+                const user = await User.findById(userId);
+                if (!user) {
+                    return respondWithStatus(404, 'User not found!', false, context);
+                }
                 await User.findByIdAndDelete(userId);
-                try {
-                    const sessionMiddleware = SessionWatcher(userId, {user: null}, 'delete');
-                    await sessionMiddleware(context.req, context.res, () => {
-                        console.log('SessionWatcher: ', userId, {user: null});
-                    });
-                } catch (e) {
-                    return exceptionHandler('managing session', e);
-                }
-                try {
-                    manageCookie(context.res, _, _, 'delete');
-                } catch (e) {
-                    return exceptionHandler('managing cookie', e);
-                }
-                return {success: true, message: 'User deleted successfully!'};
-            } catch (e) {
-                return exceptionHandler('deleting user', e);
-            }
-        },
+                await manageSessionAndCookie(userId, context, { user: null }, 'managing session', 'delete');
+                return respondWithStatus(200, 'User deleted successfully!', true, context);
+            });
+        }
     }
 };

@@ -11,15 +11,20 @@ export const typeDefs = gql`
         updatedAt: String
     }
     
+    type ImageResponse {
+        message: String!
+        success: Boolean!
+    }
+    
     extend type Query {
-        images: [Image]
-        image(id: ID!): Image
-        count_parkingImages: Int
+        images: ImageResponse
+        image(id: ID!): ImageResponse
+        count_parkingImages: ImageResponse
     }
     
     extend type Mutation {
-        createImage(userId: String!, type: String!, name: String!): Image
-        updateImage(id: ID!, userId: String, type: String, name: String): Image
-        deleteImage(id: ID!): Image
+        addImage(userId: String!, type: String!, name: String!, parkingId: String): ImageResponse
+        updateImage(id: ID!, userId: String, type: String, name: String, parkingId: String): ImageResponse
+        deleteImage(id: ID!): ImageResponse
     }
 `;

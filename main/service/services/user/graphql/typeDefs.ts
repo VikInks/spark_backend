@@ -12,6 +12,7 @@ export const typeDefs = gql`
   input UserInput {
     username: String!
     email: String!
+    password: String!
     phone: String!
     firstName: String!
     lastName: String!
@@ -47,20 +48,25 @@ export const typeDefs = gql`
     zip: String!
     country: String!
   }
+  
+  type Response {
+    success: Boolean!
+    message: String
+  }
 
   extend type Query {
-    me: Boolean
+    me: Response
   }
 
   extend type Mutation {
-    signUp(user: UserInput!): Boolean
-    login(email: String, username: String, password: String!): Boolean 
-    logout: Boolean
-    updateUser(updateFields: UserInput!): Boolean
-    updatePassword(password: String!): Boolean
-    updateLocation(location: LocationInput!): Boolean
-    updateEmail(newEmail: String!): Boolean
-    updateActive: Boolean
-    deleteUser: Boolean
+    signUp(user: UserInput!): Response
+    login(email: String, username: String, password: String!): Response 
+    logout: Response
+    updateUser(updateFields: UserInput!): Response
+    updatePassword(password: String!): Response
+    updateLocation(location: LocationInput!): Response
+    updateEmail(newEmail: String!): Response
+    updateActive: Response
+    deleteUser: Response
   }
 `;

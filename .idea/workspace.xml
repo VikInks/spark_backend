@@ -4,66 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f87143a6-64d4-439c-8fac-ab819ae73922" name="Changes" comment="(backend/image): first commit">
-      <change afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/config/authorize/authorized.validation.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/config/cors.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/server.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/service/base/interface/context.type.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/service/services/image/function.utils.resolver.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/service/services/parking/graphql/resolvers.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/service/services/parking/graphql/typeDefs.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/service/services/user/utils/function.utils.resolvers.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/service/utils/graphql_base/typeDefs.base.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/service/utils/redis/redis.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/service/utils/session.watcher.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/service/utils/token.management.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/service/utils/uuid/generate.unique.id.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/service/utils/validate.input.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/service/utils/verify.authenticated.user.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/test/user.mutation.test.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/nodemon.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="f87143a6-64d4-439c-8fac-ab819ae73922" name="Changes" comment="refactor(backend): change from multi app to mono app  &#10;&#10;complete refactor of the app, finish user resolvers">
+      <change afterPath="$PROJECT_DIR$/main/service/utils/exception.handler.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/service/utils/redis.handler.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/service/utils/respond.status.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main/service/utils/validate.response.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/image/package.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/image/pnpm-lock.yaml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/image/src/application/graphql/resolvers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/service/services/image/graphql/resolvers.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/image/src/application/graphql/typeDefs.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/service/services/image/graphql/typeDefs.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/image/src/domain/config/passport.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/image/src/infrastructure/dataValidation/mutation.validation.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/service/services/image/graphql/data_validation/mutation.validation.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/image/src/infrastructure/model/image.model.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/service/services/image/model/image.model.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/image/src/server.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/image/tsconfig.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/parking/package.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/parking/pnpm-lock.yaml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/parking/src/application/graphql/resolvers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/.dockerignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/parking/src/application/graphql/typeDefs.ts" beforeDir="false" afterPath="$PROJECT_DIR$/custom-types.d.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/parking/src/babel.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/babel.config.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/parking/src/server.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/parking/tsconfig.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/user/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/user/Dockerfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/user/Dockerfile.test" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/user/babel.config.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/user/package.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/user/pnpm-lock.yaml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/user/src/application/graphql/resolvers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/service/services/user/graphql/resolvers.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/user/src/application/graphql/typeDefs.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/service/services/user/graphql/typeDefs.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/user/src/domain/config/passport.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/config/authorize/passport.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/user/src/domain/interface/model/location.interface.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/service/services/user/model/interface/location.interface.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/user/src/domain/interface/model/user.interface.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/service/services/user/model/interface/user.interface.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/user/src/domain/interface/mutation/utils.mutation.interface.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/service/services/user/model/interface/mutation/utils.mutation.interface.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/user/src/infrastructure/authorize/authorized.validation.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/user/src/infrastructure/dataValidation/mutation.validation.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/service/services/user/graphql/data_validation/mutation.validation.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/user/src/infrastructure/model/user.model.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/service/services/user/model/user.model.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/user/src/server.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/user/test/user.mutation.test.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/user/tsconfig.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/spark_backend.iml" beforeDir="false" afterPath="$PROJECT_DIR$/spark_backend.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/server.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/server.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/service/base/interface/context.type.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/service/base/interface/contextType.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/service/services/image/function.utils.resolver.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/service/services/image/function.utils.resolver.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/service/services/image/graphql/resolvers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/service/services/image/graphql/resolvers.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/service/services/image/graphql/typeDefs.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/service/services/image/graphql/typeDefs.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/service/services/user/graphql/resolvers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/service/services/user/graphql/resolvers.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/service/services/user/graphql/typeDefs.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/service/services/user/graphql/typeDefs.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/service/services/user/utils/function.utils.resolvers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/service/services/user/utils/function.utils.resolvers.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/service/utils/token.management.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/service/utils/token.management.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/service/utils/validate.input.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/service/utils/validate.input.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/service/utils/verify.authenticated.user.ts" beforeDir="false" afterPath="$PROJECT_DIR$/main/service/utils/verify.authenticated.user.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -290,7 +247,14 @@
       <workItem from="1703085115157" duration="3799000" />
       <workItem from="1703101796383" duration="7888000" />
       <workItem from="1703147034683" duration="2998000" />
-      <workItem from="1703157964083" duration="4758000" />
+      <workItem from="1703157964083" duration="6120000" />
+      <workItem from="1703173816758" duration="2557000" />
+      <workItem from="1703185133885" duration="1448000" />
+      <workItem from="1703231277449" duration="5789000" />
+      <workItem from="1703281764629" duration="5521000" />
+      <workItem from="1703329847210" duration="2649000" />
+      <workItem from="1703356376321" duration="2349000" />
+      <workItem from="1703366254310" duration="3742000" />
     </task>
     <task id="LOCAL-00001" summary="workspace commit">
       <option name="closed" value="true" />
@@ -324,7 +288,15 @@
       <option name="project" value="LOCAL" />
       <updated>1702083750007</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="refactor(backend): change from multi app to mono app  &#10;&#10;complete refactor of the app, finish user resolvers">
+      <option name="closed" value="true" />
+      <created>1703162996017</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1703162996017</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -337,7 +309,8 @@
     <MESSAGE value="(backend/user): User service done" />
     <MESSAGE value="(backend/user): clean code" />
     <MESSAGE value="(backend/image): first commit" />
-    <option name="LAST_COMMIT_MESSAGE" value="(backend/image): first commit" />
+    <MESSAGE value="refactor(backend): change from multi app to mono app  &#10;&#10;complete refactor of the app, finish user resolvers" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor(backend): change from multi app to mono app  &#10;&#10;complete refactor of the app, finish user resolvers" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
