@@ -38,10 +38,8 @@ const userSchema = new mongoose.Schema({
         country: { type: String, required: true, trim: true, maxlength: 32 },
     },
     avatar: { type: String, trim: true },
-    active: { type: Boolean, default: true },
-    created: { type: Date, default: Date.now },
-    updated: { type: Date, default: Date.now },
-});
+    active: { type: Boolean, default: true }
+}, { timestamps: true });
 
 userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) return next();

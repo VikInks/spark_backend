@@ -5,10 +5,8 @@ const imageSchema = new mongoose.Schema({
     parkingId: { type: String, required: false },
     type: { type: String, required: true },
     name: { type: String, required: true },
-    image: { type: String, required: true },
-    createdAt: { type: Date, required: true },
-    updatedAt: { type: Date, required: false }
-});
+    image: { type: String, required: true }
+}, { timestamps: true });
 
 imageSchema.pre('save', async function (next) {
     if (this.type === 'parking' && !this.parkingId) {

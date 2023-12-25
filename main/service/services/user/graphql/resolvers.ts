@@ -11,7 +11,6 @@ import {
     updateUserFields, verifyPasswordValidity,
 } from "../utils/function.utils.resolvers";
 import {generateUniqueId} from "../../../utils/uuid/generate.unique.id";
-import {getRedisClient} from "../../../utils/redis/redis";
 import {contextType} from "../../../base/interface/contextType";
 import {verifyAuthenticatedUser} from "../../../utils/verify.authenticated.user";
 import {exceptionHandler} from "../../../utils/exception.handler";
@@ -69,11 +68,7 @@ export const resolvers = {
                     const user = await User.findOne({$or: [{email: args.user.email}, {username: args.user.username}]});
                     if (user) return respondWithStatus(401, 'User already exists!', false, context);
                     verifyPasswordValidity(args.user.password, context);
-                    const newUser = new User({
-                        ...args.user,
-                        created: new Date().toISOString(),
-                        updated: new Date().toISOString()
-                    });
+                    const newUser = new User({...args.user});
                     try {
                         await newUser.save();
                         return respondWithStatus(201, 'User created successfully!', true, context);
