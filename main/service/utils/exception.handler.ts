@@ -1,4 +1,5 @@
 import {contextType} from "../base/interface/contextType";
+import {respondWithStatus} from "./respond.status";
 
 /**
  * Handles exceptions that occur during an operation.
@@ -7,12 +8,12 @@ import {contextType} from "../base/interface/contextType";
  * @param {unknown} e - The exception object or value.
  * @param {contextType} context - The context object for the operation.
  */
-export const exceptionHandler = (operation: string, e: unknown, context: contextType) => {
+export const exceptionHandler = (operation: string, e: unknown, context: contextType)  => {
     if (e instanceof Error) {
         console.log(e);
-        return context.res.status(500).json({success: false, message: `Error while ${operation}: ${e.message}`});
+        respondWithStatus(500, `Error while ${operation}: ${e.message}`, false, context);
     } else {
         console.log(e);
-        return context.res.status(500).json({success: false, message: `Error while ${operation}: ${e}`});
+        respondWithStatus(500, `Error while ${operation}: ${e}`, false, context);
     }
 }
