@@ -1,7 +1,6 @@
 /**
  * Importing necessary modules and types
  */
-import {Context} from "joi";
 import {contextType} from "../../../base/interface/contextType";
 import {validateAndResponse} from "../../../utils/validate.response";
 import {validationSchemas} from "./data_validation/mutation.validation";
