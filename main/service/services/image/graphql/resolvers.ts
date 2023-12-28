@@ -14,7 +14,7 @@ export const resolvers = {
                 try {
                     const images = await ImageModel.find({userId: context.user});
                     await redisHandler(context, 'update', {image: [images]});
-                    return respondWithStatus(200, 'images retrieved successfully', true, context);
+                    return respondWithStatus(200, 'images retrieved successfully', true, images.map((image) => image.toJSON()), context);
                 } catch (e) {
                     exceptionHandler('images', e, context);
                 }
@@ -24,14 +24,14 @@ export const resolvers = {
             return validateAndResponse(imageValidation.deleteImageValidation, args, 'image', context, async () => {
                 const image = await ImageModel.findOne({_id: args.id, userId: context.user});
                 await redisHandler(context, 'update', {image: image});
-                return respondWithStatus(200, 'image retrieved successfully', true, context);
+                return respondWithStatus(200, 'image retrieved successfully', true, image?.toJSON(), context);
             });
         },
         count_parkingImages: async (_: any, __: any, context: contextType) => {
             return validateAndResponse(imageValidation.queryContextValidation, context, 'count_parkingImages', context, async () => {
                 const count = await ImageModel.countDocuments({userId: context.user, type: 'parking'});
                 await redisHandler(context, 'update', {count_parking: count});
-                return respondWithStatus(200, 'parking images count retrieved successfully', true, context);
+                return respondWithStatus(200, 'parking images count retrieved successfully', true, count, context);
             });
         }
     },
@@ -40,7 +40,7 @@ export const resolvers = {
             return validateAndResponse(imageValidation.addImageValidation, args, 'createImage', context, async () => {
                 try {
                     const exist = await ImageModel.findOne({userId: context.user, name: args.name});
-                    if (exist) respondWithStatus(400, 'Image name already exists', false, context);
+                    if (exist) respondWithStatus(400, 'Image name already exists', false, null, context);
                 } catch (e) {
                     exceptionHandler('addImage', e, context);
                 }
@@ -64,7 +64,7 @@ export const resolvers = {
                     } catch (e) {
                         exceptionHandler('addImage', e, context);
                     }
-                    return respondWithStatus(200, 'image added successfully', true, context);
+                    return respondWithStatus(200, 'image added successfully', true, , context);
                 } catch (e) {
                     exceptionHandler('addImage', e, context);
                 }

@@ -1,47 +1,33 @@
 import { getRedisClient } from "./redis/redis";
 import { contextType } from "../base/interface/contextType";
-import { exceptionHandler } from "./exception.handler";
 
-type operationType = 'new' | 'update' | 'delete' | 'get' | 'delete_one';
+type operationType = 'new' | 'update' | 'delete' | 'get' | 'getUserRelated';
 type resolverType = 'image' | 'parking' | 'reservation' | 'user';
 
-async function updateRedisData(sessionId: string, newData: any, merge: boolean = true) {
-    const updatedData = merge ? JSON.stringify({ ...JSON.parse(await getRedisClient().get(sessionId) || '{}'), ...newData }) : JSON.stringify(newData);
-    await getRedisClient().set(sessionId, updatedData);
+const manageRedisData = async (context: contextType, redisClient: any, redisKey: string, data?: any, operation: operationType = 'get') => {
+    const resolver = redisKey.split(':')[0];
+    switch(operation) {
+        case 'get':
+        case 'getUserRelated':
+            const keyToUse = operation === 'getUserRelated' ? `user:${context.user}:reservations` : redisKey;
+            const dataInRedis = await redisClient.get(keyToUse);
+            return dataInRedis ? JSON.parse(dataInRedis) : null;
+        case 'new':
+            await redisClient.set(redisKey, JSON.stringify(data));
+            if (resolver === 'reservation') {
+                const userReservationsKey = `user:${context.user}:reservations`;
+                let userReservations = await redisClient.get(userReservationsKey) || '[]';
+                userReservations = JSON.parse(userReservations);
+                userReservations.push(data); // Ajoute la nouvelle réservation
+                await redisClient.set(userReservationsKey, JSON.stringify(userReservations));
+            }
+            return data;
+        // ... autres cas comme 'update' et 'delete'
+    }
 }
 
-export async function redisHandler(context: contextType, operation: operationType, data?: any, sessionId?: string | null) {
-    sessionId = sessionId || context.req.headers.cookie?.match(/(?:^|;\s*)sid=([^;]+)/)?.[1];
-    if (!sessionId) return;
-
-    try {
-        switch (operation) {
-            case 'new':
-                await updateRedisData(sessionId, data, false);
-                break;
-            case 'update':
-                await updateRedisData(sessionId, data);
-                break;
-            case 'get':
-                const sessionData = await getRedisClient().get(sessionId);
-                if (sessionData && JSON.parse(sessionData).userId !== context.user) {
-                    throw new Error('Invalid session');
-                }
-                break;
-            case 'delete':
-                await getRedisClient().del(sessionId);
-                break;
-            case 'delete_one':
-                const session = await getRedisClient().get(sessionId);
-                if (session) {
-                    const sessionData = JSON.parse(session);
-                    const newData = { ...sessionData };
-                    delete newData[data];
-                    await updateRedisData(sessionId, newData);
-                }
-                break;
-        }
-    } catch (e) {
-        exceptionHandler(operation, e, context);
-    }
+export const redisHandler = async (context: contextType, operation: operationType, resolver: resolverType, data?: any) => {
+    const redisKey = `${resolver}:${data?.id || ''}`;
+    const redisClient = getRedisClient();
+    return await manageRedisData(context, redisClient, redisKey, data, operation);
 }
