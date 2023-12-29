@@ -11,9 +11,9 @@ import {respondWithStatus} from "./respond.status";
 export const exceptionHandler = (operation: string, e: unknown, context: contextType)  => {
     if (e instanceof Error) {
         console.log(e);
-        respondWithStatus(500, `Error while ${operation}: ${e.message}`, false, context);
+        respondWithStatus(500, `Error while ${operation}: ${e.message}`, false, null, context);
     } else {
         console.log(e);
-        respondWithStatus(500, `Error while ${operation}: ${e}`, false, context);
+        respondWithStatus(500, `Error while ${operation}: ${e}`, false, null, context);
     }
 }

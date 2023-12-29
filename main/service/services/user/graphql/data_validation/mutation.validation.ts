@@ -58,6 +58,15 @@ const updateLocationValidationSchema = Joi.object({
     })
 });
 
+const updateCarsValidationSchema = Joi.object({
+    cars: Joi.object({
+        list: Joi.array().items(Joi.object({
+            type: Joi.string().required(),
+            plug: Joi.string().required(),
+        })),
+    }),
+});
+
 const updateActiveValidationSchema = Joi.object({
     active: Joi.boolean().required(),
 });
@@ -81,5 +90,6 @@ export const validationSchemas = {
     updatePasswordValidationSchema,
     updateEmailValidationSchema,
     updateLocationValidationSchema,
+    updateCarsValidationSchema,
     updateActiveValidationSchema,
 };

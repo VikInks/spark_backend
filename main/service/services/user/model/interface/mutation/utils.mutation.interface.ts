@@ -3,6 +3,14 @@ interface UserInput {
     password: string;
     email: string;
     phone: string;
+    cars: {
+        id: string
+        name: string
+        brand: string
+        model: string
+        type: 'gas' | 'electric'
+        plug: string
+    }[],
     firstName: string;
     lastName: string;
     location: {

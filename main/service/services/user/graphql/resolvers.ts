@@ -7,16 +7,25 @@ import {
     UserInput
 } from "../model/interface/mutation/utils.mutation.interface";
 import {
-    generateJwt, manageSessionAndCookie,
+    generateJwt,
     updateUserFields, verifyPasswordValidity,
 } from "../utils/function.utils.resolvers";
-import {generateUniqueId} from "../../../utils/uuid/generate.unique.id";
 import {contextType} from "../../../base/interface/contextType";
 import {verifyAuthenticatedUser} from "../../../utils/verify.authenticated.user";
 import {exceptionHandler} from "../../../utils/exception.handler";
 import {respondWithStatus} from "../../../utils/respond.status";
 import {validateAndResponse} from "../../../utils/validate.response";
-import {redisHandler} from "../../../utils/redis.handler";
+import {manageCookie} from "../../../utils/token.management";
+import {generateUniqueId} from "../../../utils/uuid/generate.unique.id";
+
+interface carInput {
+    id: string
+    name: string
+    brand: string
+    model: string
+    type: 'gas' | 'electric'
+    plug: string
+}
 
 /**
  * A collection of resolvers for handling GraphQL queries and mutations related to users.
@@ -32,21 +41,19 @@ export const resolvers = {
          * @param context - The context object which contains information about the current request.
          * @returns An object indicating the success or failure of the operation, along with a message.
          */
+        // todo: add other queries to fetch other datas related to user on other services
         me: async (_: any, __: any, context: contextType) => {
             const userId = verifyAuthenticatedUser(context);
-            let user;
+            if (typeof userId !== 'string') return userId;
             try {
-                user = await User.findById(userId);
+                const user = await User.findById(userId);
+                if (!user) {
+                    return respondWithStatus(404, 'User not found!', false, null, context);
+                }
+                return respondWithStatus(200, 'User fetched successfully!', true, user?.toJSON(), context);
             } catch (e) {
                 return exceptionHandler('finding user', e, context);
             }
-            if (!user) return respondWithStatus(404, 'User not found!', false, null, context);
-            try {
-                await manageSessionAndCookie(userId, context, {user: user}, 'fetching user');
-            } catch (e) {
-                return exceptionHandler('managing session', e, context);
-            }
-            return respondWithStatus(200, 'User fetched successfully!', true, user?.toJSON(), context);
         },
     },
     Mutation: {
@@ -67,10 +74,13 @@ export const resolvers = {
             return validateAndResponse(validationSchemas.signUpValidationSchema, args.user, 'sign up user', context, async () => {
                 try {
                     const user = await User.findOne({$or: [{email: args.user.email}, {username: args.user.username}]});
-
                     if (user) return respondWithStatus(401, 'User already exists!', false, null, context);
                     verifyPasswordValidity(args.user.password, context);
-                    const newUser = new User({...args.user});
+                    const newUser = new User({
+                        ...args.user, cars: [
+                            ...args.user.cars.map((car) => ({...car, id: generateUniqueId()}))
+                        ]
+                    });
                     try {
                         await newUser.save();
                         return respondWithStatus(201, 'User created successfully!', true, newUser.toJSON(), context);
@@ -109,19 +119,8 @@ export const resolvers = {
                 try {
                     const user = await User.findOne({$or: [{email}, {username}].filter(Boolean)});
                     if (!user || !await bcrypt.compare(password, user.password)) return respondWithStatus(401, 'Invalid credentials!', false, null, context);
-                    const token = generateJwt(user._id.toString());
-                    const sessionId = generateUniqueId();
-                    try {
-                        await manageSessionAndCookie(user._id.toString(), context, {user: user}, 'logging in user', 'login');
-                    } catch (e) {
-                        return exceptionHandler('managing cookie', e, context);
-                    }
-                    try {
-                        await redisHandler(context, 'new', {id: user._id.toString(), ...user}, sessionId);
-                    } catch (e) {
-                        return exceptionHandler('setting redis session', e, context);
-                    }
-                    return {success: true, message: 'User logged in successfully!'};
+                    manageCookie(context, generateJwt(user._id.toString()));
+                    return respondWithStatus(200, 'User logged in successfully!', true, null, context);
                 } catch (e) {
                     return exceptionHandler('logging in user', e, context);
                 }
@@ -138,16 +137,9 @@ export const resolvers = {
          */
         logout: async (_: any, __: any, context: contextType) => {
             const userId = verifyAuthenticatedUser(context);
-            try {
-                try {
-                    await manageSessionAndCookie(userId, context, {user: null}, 'logging out user', 'delete');
-                } catch (e) {
-                    return exceptionHandler('managing session', e, context);
-                }
-                return respondWithStatus(200, 'User logged out successfully!', true, null, context);
-            } catch (e) {
-                return exceptionHandler('logging out user', e, context);
-            }
+            if (typeof userId !== 'string') return userId;
+            manageCookie(context, _, 'logout');
+            return respondWithStatus(200, 'User logged out successfully!', true, null, context);
         },
         /**
          * Update a user's information.
@@ -161,14 +153,10 @@ export const resolvers = {
         updateUser: async (_: any, {updateFields}: { updateFields: UpdateUserInput }, context: contextType) => {
             return validateAndResponse(validationSchemas.updateValidationSchema, {updateFields}, 'update user', context, async () => {
                 const userId = verifyAuthenticatedUser(context);
+                if (typeof userId !== 'string') return userId;
                 try {
                     const updatedSessionData = {user: {...updateFields}};
                     const updatedUser = await updateUserFields(userId, updateFields);
-                    try {
-                        await manageSessionAndCookie(userId, context, updatedSessionData, 'updating user');
-                    } catch (e) {
-                        return exceptionHandler('managing session', e, context);
-                    }
                     return respondWithStatus(200, 'User updated successfully!', true, updatedUser.toJSON(), context);
                 } catch (e) {
                     return exceptionHandler('updating user', e, context);
@@ -192,6 +180,7 @@ export const resolvers = {
             return validateAndResponse(validationSchemas.updatePasswordValidationSchema, {password}, 'update password', context, async () => {
                 if (!password) return respondWithStatus(401, 'Password cannot be empty!', false, null, context);
                 const userId = verifyAuthenticatedUser(context);
+                if (typeof userId !== 'string') return userId;
                 try {
                     const user = await User.findById(userId);
                     if (!user) return respondWithStatus(404, 'User not found!', false, null, context);
@@ -200,11 +189,6 @@ export const resolvers = {
                     const salt = await bcrypt.genSalt(10);
                     const hashedPassword = await bcrypt.hash(password, salt);
                     const updatedUser = await updateUserFields(userId, {password: hashedPassword});
-                    try {
-                        await manageSessionAndCookie(userId, context, {user: {password: hashedPassword}}, 'updating password');
-                    } catch (e) {
-                        return exceptionHandler('managing session', e, context);
-                    }
                     return respondWithStatus(200, 'Password updated successfully!', true, updatedUser.toJSON(), context);
                 } catch (e) {
                     return exceptionHandler('updating password', e, context);
@@ -223,13 +207,9 @@ export const resolvers = {
         updateLocation: async (_: any, {location}: { location: UpdateLocation }, context: contextType) => {
             return validateAndResponse(validationSchemas.updateLocationValidationSchema, {location}, 'update location', context, async () => {
                 const userId = verifyAuthenticatedUser(context);
+                if (typeof userId !== 'string') return userId;
                 try {
                     const updatedUser = await updateUserFields(userId, {location: location});
-                    try {
-                        await manageSessionAndCookie(userId, context, {user: {location: location}}, 'updating location');
-                    } catch (e) {
-                        return exceptionHandler('managing session', e, context);
-                    }
                     return respondWithStatus(200, 'Location updated successfully!', true, updatedUser.toJSON(), context);
                 } catch (e) {
                     return exceptionHandler('updating location', e, context);
@@ -249,20 +229,42 @@ export const resolvers = {
         updateEmail: async (_: any, {email}: { email: string }, context: contextType) => {
             return validateAndResponse(validationSchemas.updateEmailValidationSchema, {email}, 'update email', context, async () => {
                 const userId = verifyAuthenticatedUser(context);
+                if (typeof userId !== 'string') return userId;
                 try {
                     const user = await User.findOne({email});
                     if (user) return respondWithStatus(401, 'Email already exists!', false, null, context);
                     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                     if (!emailRegex.test(email)) return respondWithStatus(401, 'Invalid email!', false, null, context);
                     const updatedUser = await updateUserFields(userId, {email: email});
-                    try {
-                        await manageSessionAndCookie(userId, context, {user: {email: email}}, 'updating email');
-                    } catch (e) {
-                        return exceptionHandler('managing session', e, context);
-                    }
                     return respondWithStatus(200, 'Email updated successfully!', true, updatedUser.toJSON(), context);
                 } catch (e) {
                     return exceptionHandler('updating email', e, context);
+                }
+            });
+        },
+        updateCars: async (_: any, {args}: { args: carInput[] }, context: contextType) => {
+            const userId = verifyAuthenticatedUser(context);
+            if (typeof userId !== 'string') return userId;
+            return validateAndResponse(validationSchemas.updateCarsValidationSchema, {args}, 'update cars', context, async () => {
+                try {
+                    const user = await User.findById(userId);
+                    if (!user) return respondWithStatus(404, 'User not found!', false, null, context);
+                    const jsonData = user.toJSON();
+                    const updatedUser = await updateUserFields(userId, {
+                        cars: jsonData.cars?.map((car) => {
+                            const newCar = args.find((arg) => arg.id === car.id);
+                            if (newCar) {
+                                return {
+                                    ...car,
+                                    ...newCar
+                                };
+                            }
+                            return car;
+                        }),
+                    });
+                    return respondWithStatus(200, 'Cars updated successfully!', true, updatedUser.toJSON(), context);
+                } catch (e) {
+                    return exceptionHandler('updating cars', e, context);
                 }
             });
         },
@@ -277,21 +279,20 @@ export const resolvers = {
          */
         updateActive: async (_: any, __: any, context: contextType) => {
             const userId = verifyAuthenticatedUser(context);
+            if (typeof userId !== 'string') return userId;
             return validateAndResponse(null, null, 'updating active status', context, async () => {
-                const user = await User.findById(userId);
-                if (!user) {
-                    return respondWithStatus(404, 'User not found!', false, null, context);
+                try {
+                    const user = await User.findById(userId);
+                    const active = !user?.active;
+                    try {
+                        await updateUserFields(userId, {active: active});
+                    } catch (e) {
+                        return exceptionHandler('updating active status', e, context);
+                    }
+                    return respondWithStatus(200, 'Active status updated successfully!', true, null, context);
+                } catch (e) {
+                    return exceptionHandler('updating active status', e, context);
                 }
-                const active = !user.active;
-                await updateUserFields(userId, {active: active});
-                await manageSessionAndCookie(
-                    userId,
-                    context,
-                    {user: {active: active}},
-                    'managing session',
-                    !active ? 'delete' : ''
-                );
-                return respondWithStatus(200, 'Active status updated successfully!', true, null, context);
             });
         },
         /**
@@ -305,14 +306,13 @@ export const resolvers = {
          */
         deleteUser: async (_: any, __: any, context: contextType) => {
             const userId = verifyAuthenticatedUser(context);
-
+            if (typeof userId !== 'string') return userId;
             return validateAndResponse(null, null, 'deleting user', context, async () => {
                 const user = await User.findById(userId);
                 if (!user) {
                     return respondWithStatus(404, 'User not found!', false, null, context);
                 }
                 await User.findByIdAndDelete(userId);
-                await manageSessionAndCookie(userId, context, {user: null}, 'managing session', 'delete');
                 return respondWithStatus(200, 'User deleted successfully!', true, null, context);
             });
         }

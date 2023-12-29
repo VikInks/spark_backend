@@ -1,16 +1,6 @@
 import gql from "graphql-tag";
 
-export const reservationTypeDefs = gql`
-    type Reservation {
-        id: ID!
-        userId: String!
-        parkingId: String!
-        startDate: String!
-        endDate: String!
-        price: Float!
-        status: String!
-    }
-    
+export const typeDefs = gql`
     type ReservationHistory {
         id: ID!
         userId: String!
@@ -40,13 +30,13 @@ export const reservationTypeDefs = gql`
     }
     
     extend type Query {
-        reservations: [Reservation]
-        reservation(id: ID!): Reservation
+        reservations: [Response]
+        reservation(id: ID!): Response
     }
     
     extend type Mutation {
-        createReservation(reservation: ReservationInput!): Reservation
-        updateReservation(id: ID!, reservation: ReservationInput!): Reservation
-        deleteReservation(id: ID!): Reservation
+        createReservation(reservation: ReservationInput!): Response
+        updateReservation(id: ID!, reservation: ReservationInput!): Response
+        deleteReservation(id: ID!): Response
     }
 `;

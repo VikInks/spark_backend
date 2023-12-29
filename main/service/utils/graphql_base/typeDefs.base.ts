@@ -6,6 +6,14 @@ import gql from "graphql-tag";
  * @type {import('graphql').DocumentNode}
  */
 export const baseTypeDefs = gql`
+    scalar JSON
+
+    type Response {
+        success: Boolean!
+        message: String
+        data: JSON
+    }
+    
     type Query {
         _empty: String
     }

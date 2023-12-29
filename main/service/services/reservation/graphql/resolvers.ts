@@ -1,51 +1,86 @@
 import {validateAndResponse} from "../../../utils/validate.response";
 import {contextType} from "../../../base/interface/contextType";
 import {validationSchemas} from "./data_validation/mutation.validation";
-import {Parking} from "../../parking/model/parking.model";
 import {exceptionHandler} from "../../../utils/exception.handler";
 import {respondWithStatus} from "../../../utils/respond.status";
 import {Reservation} from "../model/reservation.model";
-import {redisHandler} from "../../../utils/redis.handler";
 
 type reservationType = {
     userId?: string,
 }
 
-// todo : add a logic to check if the user and the parking exists in redis before adding them to redis, if not, add them to redis
+type reservationMutationType = {
+    userId: string,
+    parkingId: string,
+    startDate: Date,
+    endDate: Date,
+    price: string,
+    status: string,
+}
 
-export const reservationResolvers = {
+export const resolvers = {
     Query: {
         reservations: async (_: any, args: reservationType, context: contextType) => {
             return validateAndResponse(validationSchemas.idReservationValidation, args, 'get reservations', context,
                 async () => {
-                    const keyRedis = 'reservation:* { userId: ' + args.userId + ' }';
                     try {
-                        let reservations = await redisHandler('get', 'reservation', keyRedis);
-                        if(!reservations) {
-                            // set the data from the db to redis
-                            reservations = await Reservation.find({userId: args.userId});
-                            await redisHandler('new', 'reservation', keyRedis, reservations);
-                        }
-                        return respondWithStatus(200, 'Reservations from Redis', true, reservations.toJSON(), context);
+                        const reservations = await Reservation.find({userId: args.userId});
+                        return respondWithStatus(200, 'Reservations from Redis', true, reservations.map((reservation) => reservation.toJSON()), context);
                     } catch (error) {
-                        exceptionHandler('Error getting reservations from Redis', error, context);
+                        return exceptionHandler('Error getting reservations from Redis', error, context);
                     }
                 }
             );
         },
-        reservation: async (_: any, {id}: any, {models}: any) => {
-
+        reservation: async (_: any, {id}: any, context: contextType) => {
+            return validateAndResponse(validationSchemas.idReservationValidation, {id}, 'get reservation', context,
+                async () => {
+                    try {
+                        const reservation = await Reservation.findById(id);
+                        return respondWithStatus(200, 'Reservation found', true, reservation?.toJSON(), context);
+                    } catch (error) {
+                        return exceptionHandler('Reservation not found', 404, context);
+                    }
+                }
+            );
         },
     },
     Mutation: {
-        createReservation: async (_: any, {reservation}: any, {models}: any) => {
-
+        createReservation: async (_: any, {reservation}: {reservation : reservationMutationType}, context: contextType) => {
+            return validateAndResponse(validationSchemas.createReservationValidation, reservation, 'create reservation', context,
+                async () => {
+                    try {
+                        const reservationCreated = await Reservation.create(reservation);
+                        return respondWithStatus(200, 'Reservation created', true, reservationCreated.toJSON(), context);
+                    } catch (error) {
+                        return exceptionHandler('Error creating reservation', error, context);
+                    }
+                }
+            );
         },
-        updateReservation: async (_: any, {id, reservation}: any, {models}: any) => {
-
+        updateReservation: async (_: any, {id, reservation}: {id:string, reservation: reservationMutationType}, context: contextType) => {
+            return validateAndResponse(validationSchemas.updateReservationValidation, reservation, 'update reservation', context,
+                async () => {
+                    try {
+                        const reservationUpdated = await Reservation.findByIdAndUpdate(id, reservation, {new: true});
+                        return respondWithStatus(200, 'Reservation updated', true, reservationUpdated?.toJSON(), context);
+                    } catch (error) {
+                        return exceptionHandler('Error updating reservation', error, context);
+                    }
+                }
+            );
         },
-        deleteReservation: async (_: any, {id}: any, {models}: any) => {
-
+        deleteReservation: async (_: any, {id}: {id: string},  context: contextType) => {
+            return validateAndResponse(validationSchemas.idReservationValidation, {id}, 'delete reservation', context,
+                async () => {
+                    try {
+                        await Reservation.findByIdAndDelete(id);
+                        return respondWithStatus(200, 'Reservation deleted', true, null, context);
+                    } catch (error) {
+                        return exceptionHandler('Error deleting reservation', error, context);
+                    }
+                }
+            );
         },
     }
 }
