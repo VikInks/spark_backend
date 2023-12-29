@@ -14,7 +14,7 @@ const rootPath = '../../../../';
  * @return {Promise<string>} - The path of the saved image.
  */
 export async function processAndSaveImage(file: Buffer, userId: string, imageName: string, type: string): Promise<string> {
-    const imagesDirectory = `${rootPath}public/images/${userId}/${type}`;
+    const imagesDirectory = `${rootPath}public/images/${userId}/${type}/`;
     const imageFullPath = path.join(imagesDirectory, imageName);
     const imageWebPPath = imageFullPath.replace(/\.[^/.]+$/, ".webp");
 

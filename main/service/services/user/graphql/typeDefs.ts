@@ -13,10 +13,28 @@ export const typeDefs = gql`
     username: String!
     email: String!
     password: String!
+    cars: [CarsInput]
     phone: String!
     firstName: String!
     lastName: String!
     location: LocationInput
+  }
+  
+  input CarsInput {
+    name: String!
+    brand: String!
+    model: String!
+    type: String!
+    plug: String
+  }
+  
+  input CarsUpdateInput {
+    id: String!
+    name: String
+    brand: String
+    model: String
+    type: String
+    plug: String
   }
 
   input LocationInput {
@@ -36,6 +54,7 @@ export const typeDefs = gql`
     firstName: String!
     lastName: String!
     active: Boolean
+    cars: [Cars]
     location: Location
     created: String
     updated: String
@@ -49,9 +68,12 @@ export const typeDefs = gql`
     country: String!
   }
   
-  type Response {
-    success: Boolean!
-    message: String
+  type Cars {
+    name: String!
+    brand: String!
+    model: String!
+    type: String!
+    plug: String
   }
 
   extend type Query {
@@ -66,6 +88,7 @@ export const typeDefs = gql`
     updatePassword(password: String!): Response
     updateLocation(location: LocationInput!): Response
     updateEmail(newEmail: String!): Response
+    updateCars(cars: [CarsUpdateInput]!): Response
     updateActive: Response
     deleteUser: Response
   }

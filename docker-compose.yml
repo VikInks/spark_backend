@@ -8,7 +8,6 @@ services:
       - "4000:4000"
     depends_on:
       - db
-      - redis-server
 
   db:
     image: mongo
@@ -19,13 +18,5 @@ services:
     volumes:
       - spark-db-data:/data/db
 
-  redis-server:
-    image: redis
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis-data:/data
-
 volumes:
   spark-db-data:
-  redis-data:

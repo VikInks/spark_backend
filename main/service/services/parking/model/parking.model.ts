@@ -10,6 +10,7 @@ const parkingSchema = new mongoose.Schema({
     ownerId: { type: String, required: true },
     name: { type: String, required: true, trim: true, maxlength: 32 },
     price: { type: Number, required: true },
+    electricCharger: { type: Boolean, default: false },
     geoLocation: {
         type: { type: String, default: 'Point' },
         coordinates: { type: [Number], required: true },

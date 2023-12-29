@@ -4,20 +4,23 @@ import express from 'express';
 import {baseTypeDefs} from "./service/utils/graphql_base/typeDefs.base";
 import {resolvers as UserResolvers} from "./service/services/user/graphql/resolvers";
 import {resolvers as ImageResolvers} from "./service/services/image/graphql/resolvers";
+import {resolvers as ParkingResolvers} from "./service/services/parking/graphql/resolvers";
+import {resolvers as ReservationResolvers} from "./service/services/reservation/graphql/resolvers";
 import {typeDefs as UserType} from "./service/services/user/graphql/typeDefs";
 import {typeDefs as ImageType} from "./service/services/image/graphql/typeDefs";
+import {typeDefs as ParkingType} from "./service/services/parking/graphql/typeDefs";
+import {typeDefs as ReservationType} from "./service/services/reservation/graphql/typeDefs";
 import * as http from "http";
 import {ApolloServerPluginDrainHttpServer} from "@apollo/server/plugin/drainHttpServer";
 import {expressMiddleware} from "@apollo/server/express4";
 import mongoose from "mongoose";
 import bodyParser from 'body-parser';
 import {configureCors} from "./config/cors";
-import {configureRedis, configureSession} from "./service/utils/redis/redis";
 import {contextType} from "./service/base/interface/contextType";
 import {manageCookie} from "./service/utils/token.management";
 
-const aggregateResolvers = [UserResolvers, ImageResolvers];
-const aggregateTypeDefs = [baseTypeDefs, UserType, ImageType];
+const aggregateResolvers = [UserResolvers, ImageResolvers, ParkingResolvers, ReservationResolvers];
+const aggregateTypeDefs = [baseTypeDefs, UserType, ImageType, ParkingType, ReservationType];
 
 /**
  * Starts the server and establishes connections to MongoDB and Redis.
@@ -38,10 +41,6 @@ async function start() {
             console.log(err);
         }
     );
-
-    // connection to redis
-    let redisStore = await configureRedis();
-    app.use(configureSession(redisStore));
 
     require('./config/authorize/passport');
     app.use(configureCors());

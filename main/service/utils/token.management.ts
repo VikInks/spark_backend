@@ -7,14 +7,12 @@ import {contextType} from "../base/interface/contextType";
  *
  * @param {contextType|Response} contextOrResponse - The context or response object.
  * @param {string} [token] - The JWT token.
- * @param {string} [sessionId] - The session ID.
  * @param {string} [action] - The action to perform.
  * @return {void}
  */
 export function manageCookie(
     contextOrResponse: contextType | Response,
     token?: string,
-    sessionId?: string,
     action?: string
 ): void {
     const response = (contextOrResponse as contextType).res || contextOrResponse as Response;
@@ -28,18 +26,9 @@ export function manageCookie(
         return;
     }
 
-    // if no session ID is provided, extract it from the request object to check if it exists
-    if (!sessionId) {
-        const request = (contextOrResponse as contextType).req;
-        sessionId = request.headers.cookie?.split(';').find(c => c.trim().startsWith('sid='))?.split('=')[1];
-    }
-
     let cookieValue: string;
     if (token) {
         cookieValue = `jwt=${encodeURIComponent(token)};`;
-        if (sessionId) {
-            cookieValue += ` sid=${encodeURIComponent(sessionId)};`;
-        }
         cookieValue += ' HttpOnly; Path=/; Max-Age=3600';
     } else {
         cookieValue = 'HttpOnly; Path=/; Max-Age=0';

@@ -7,7 +7,6 @@ import {validationSchemas} from "./data_validation/mutation.validation";
 import {History, Parking} from "../model/parking.model";
 import {exceptionHandler} from "../../../utils/exception.handler";
 import {respondWithStatus} from "../../../utils/respond.status";
-import {redisHandler} from "../../../utils/redis.handler";
 
 type filterType = {
     ownerId?: string,
@@ -41,10 +40,9 @@ export const resolvers = {
             return validateAndResponse(validationSchemas.getParkingValidationSchema, {id}, 'get parking', context, async () => {
                 const parking = await Parking.findById(id);
                 if (!parking) {
-                    exceptionHandler('Parking not found', 404, context);
+                    return exceptionHandler('Parking not found', 404, context);
                 }
-                await redisHandler(context, 'get', parking);
-                return respondWithStatus(200, 'Parking found', true, context);
+                return respondWithStatus(200, 'Parking found', true,  parking.toJSON(), context);
             });
         },
         /**
@@ -57,10 +55,9 @@ export const resolvers = {
             return validateAndResponse(validationSchemas.getParkingsValidationSchema, {filter}, 'get parkings', context, async () => {
                 const parkings = await Parking.find(filter);
                 if (!parkings) {
-                    exceptionHandler('Parkings not found', 404, context);
+                    return exceptionHandler('Parkings not found', 404, context);
                 }
-                await redisHandler(context, 'get', parkings);
-                return respondWithStatus(200, 'Parkings found', true, context);
+                return respondWithStatus(200, 'Parkings found', true, parkings.map(parking => parking.toJSON()), context);
             });
         }
     },
@@ -78,20 +75,15 @@ export const resolvers = {
             return validateAndResponse(validationSchemas.createParkingValidationSchema, {parking}, 'create parking', context, async () => {
                 const parkingExists = await Parking.findOne({geoLocation: parking.geoLocation});
                 if (parkingExists) {
-                    exceptionHandler('Parking this position already exist', 400, context);
+                    return exceptionHandler('Parking this position already exist', 400, context);
                 }
                 const newParking = new Parking(parking);
                 try {
                     await newParking.save();
                 } catch (e) {
-                    exceptionHandler('create parking place', 500, context);
+                    return exceptionHandler('create parking place', 500, context);
                 }
-                try {
-                    await redisHandler(context, 'new', newParking);
-                } catch (e) {
-                    exceptionHandler('redis error', 500, context);
-                }
-                return respondWithStatus(200, 'Parking created', true, context);
+                return respondWithStatus(200, 'Parking created', true, newParking.toJSON(), context);
             });
         },
         /**
@@ -107,14 +99,9 @@ export const resolvers = {
             }, 'update parking', context, async () => {
                 const updatedParking = await Parking.findByIdAndUpdate(id, parking);
                 if (!updatedParking) {
-                    exceptionHandler('Parking not found', 404, context);
+                    return exceptionHandler('Parking not found', 404, context);
                 }
-                try {
-                    await redisHandler(context, 'update', updatedParking);
-                } catch (e) {
-                    exceptionHandler('redis error', 500, context);
-                }
-                return respondWithStatus(200, 'Parking updated', true, context);
+                return respondWithStatus(200, 'Parking updated', true, updatedParking.toJSON(), context);
             });
         },
         /**
@@ -128,23 +115,18 @@ export const resolvers = {
                 try {
                     const pushToHistory = await Parking.findById(id);
                     if (!pushToHistory) {
-                        exceptionHandler('Parking not found', 404, context);
+                        return exceptionHandler('Parking not found', 404, context);
                     }
                     await History.create({...pushToHistory, active: false});
                 } catch (e) {
-                    exceptionHandler('add to history', 500, context);
+                    return exceptionHandler('add to history', 500, context);
                 }
 
                 const deletedParking = await Parking.findByIdAndDelete(id);
                 if (!deletedParking) {
-                    exceptionHandler('Parking not found', 404, context);
+                    return exceptionHandler('Parking not found', 404, context);
                 }
-                try {
-                    await redisHandler(context, 'delete', deletedParking);
-                } catch (e) {
-                    exceptionHandler('redis error', 500, context);
-                }
-                return respondWithStatus(200, 'Parking deleted', true, context);
+                return respondWithStatus(200, 'Parking deleted', true, null, context);
             });
         },
     },

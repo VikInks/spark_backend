@@ -1,3 +1,5 @@
 /node_modules/
 /.idea/
 /main/service/user/apollo_mutation/
+/main/service/services/user/apollo_mutation/login.json
+/main/service/services/user/apollo_mutation/new_user.json
