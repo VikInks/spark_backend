@@ -12,7 +12,8 @@ export const resolvers = {
             return validateAndResponse(imageValidation.queryContextValidation, context, 'images', context, async () => {
                 try {
                     const images = await ImageModel.find({userId: context.user});
-                    return respondWithStatus(200, 'images retrieved successfully', true, images.map((image) => image.toJSON()), context);
+                    const message = `${images && images.length} image${images.length > 1 ? 's' : ''} retrieved successfully`;
+                    return respondWithStatus(200, message, true, images.map((image) => image.toJSON()), context);
                 } catch (e) {
                     return exceptionHandler('images', e, context);
                 }
@@ -20,14 +21,23 @@ export const resolvers = {
         },
         image: async (_: any, args: any, context: contextType) => {
             return validateAndResponse(imageValidation.deleteImageValidation, args, 'image', context, async () => {
-                const image = await ImageModel.findOne({_id: args.id, userId: context.user});
-                return respondWithStatus(200, 'image retrieved successfully', true, image?.toJSON(), context);
+
+                try {
+                    const image = await ImageModel.findOne({_id: args.id, userId: context.user});
+                    return respondWithStatus(200, 'image retrieved successfully', true, image?.toJSON(), context);
+                } catch (e) {
+                    return exceptionHandler('image', e, context);
+                }
             });
         },
         count_parkingImages: async (_: any, __: any, context: contextType) => {
             return validateAndResponse(imageValidation.queryContextValidation, context, 'count_parkingImages', context, async () => {
-                const count = await ImageModel.countDocuments({userId: context.user, type: 'parking'});
-                return respondWithStatus(200, 'parking images count retrieved successfully', true, count, context);
+                try {
+                    const count = await ImageModel.countDocuments({userId: context.user, type: 'parking'});
+                    return respondWithStatus(200, 'parking images count retrieved successfully', true, count, context);
+                } catch (e) {
+                    return exceptionHandler('count_parkingImages', e, context);
+                }
             });
         }
     },

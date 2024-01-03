@@ -42,7 +42,7 @@ export const resolvers = {
                 if (!parking) {
                     return exceptionHandler('Parking not found', 404, context);
                 }
-                return respondWithStatus(200, 'Parking found', true,  parking.toJSON(), context);
+                return respondWithStatus(200, 'Parking found', true, parking.toJSON(), context);
             });
         },
         /**
@@ -53,11 +53,12 @@ export const resolvers = {
          */
         getParkings: async (_: any, {filter}: { filter: filterType }, context: contextType) => {
             return validateAndResponse(validationSchemas.getParkingsValidationSchema, {filter}, 'get parkings', context, async () => {
-                const parkings = await Parking.find(filter);
-                if (!parkings) {
-                    return exceptionHandler('Parkings not found', 404, context);
+                try {
+                    const parkings = await Parking.find(filter);
+                    return respondWithStatus(200, `${!!parkings ? parkings.length : 0} parking found`, true, parkings.map(parking => parking.toJSON()), context);
+                } catch (e) {
+                    return exceptionHandler('get parkings', e, context);
                 }
-                return respondWithStatus(200, 'Parkings found', true, parkings.map(parking => parking.toJSON()), context);
             });
         }
     },
