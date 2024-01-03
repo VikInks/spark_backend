@@ -5,4 +5,5 @@ export interface contextType extends BaseContext {
     req: Request;
     res: Response;
     user?: string | null;
+    responseSent?: boolean;
 }

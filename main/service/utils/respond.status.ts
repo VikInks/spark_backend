@@ -10,5 +10,8 @@ import {contextType} from "../base/interface/contextType";
  * @param {contextType} context - The execution context for the Azure Function.
  */
 export const respondWithStatus = (status: number, message: string, success: boolean, data: any, context: contextType) => {
-    return context.res.status(status).json({success: success, message: message, data: data});
+    if (!context.res.headersSent) {
+        context.res.status(status).json({success: success, message: message, data: data});
+        context.responseSent = true;
+    }
 }

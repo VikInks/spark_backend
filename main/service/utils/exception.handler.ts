@@ -8,12 +8,10 @@ import {respondWithStatus} from "./respond.status";
  * @param {unknown} e - The exception object or value.
  * @param {contextType} context - The context object for the operation.
  */
-export const exceptionHandler = (operation: string, e: unknown, context: contextType)  => {
-    if (e instanceof Error) {
+export const exceptionHandler = (operation: string, e: unknown, context: contextType) => {
+    if (!context.responseSent) {
         console.log(e);
-        respondWithStatus(500, `Error while ${operation}: ${e.message}`, false, null, context);
-    } else {
-        console.log(e);
-        respondWithStatus(500, `Error while ${operation}: ${e}`, false, null, context);
+        const errorMessage = e instanceof Error ? e.message : 'Unknown error';
+        respondWithStatus(500, `Error while ${operation}: ${errorMessage}`, false, null, context);
     }
-}
+};
