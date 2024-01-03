@@ -16,7 +16,6 @@ import {exceptionHandler} from "../../../utils/exception.handler";
 import {respondWithStatus} from "../../../utils/respond.status";
 import {validateAndResponse} from "../../../utils/validate.response";
 import {manageCookie} from "../../../utils/token.management";
-import {generateUniqueId} from "../../../utils/uuid/generate.unique.id";
 
 interface carInput {
     id: string
@@ -110,11 +109,7 @@ export const resolvers = {
                     const user = await User.findOne({$or: [{email: args.user.email}, {username: args.user.username}]});
                     if (user) return respondWithStatus(401, 'User already exists!', false, null, context);
                     verifyPasswordValidity(args.user.password, context);
-                    const newUser = new User({
-                        ...args.user, cars: [
-                            ...args.user.cars.map((car) => ({...car, id: generateUniqueId()}))
-                        ]
-                    });
+                    const newUser = new User({...args.user});
                     try {
                         await newUser.save();
                         return respondWithStatus(201, 'User created successfully!', true, newUser.toJSON(), context);

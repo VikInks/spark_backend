@@ -14,7 +14,14 @@ const signUpValidationSchema = Joi.object({
         state: Joi.string().required(),
         zip: Joi.string().required(),
         country: Joi.string().required(),
-    }).required()
+    }).required(),
+    cars: Joi.array().items(Joi.object({
+        name: Joi.string().required(),
+        brand: Joi.string().required(),
+        model: Joi.string().required(),
+        type: Joi.string().required(),
+        plug: Joi.string()
+    })),
 });
 
 const loginValidationSchema = Joi.object({

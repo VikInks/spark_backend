@@ -2,11 +2,10 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 const car = new mongoose.Schema({
-    id: { type: String, required: true, trim: true, maxlength: 32 },
     name: { type: String, required: true, trim: true, maxlength: 32 },
     brand: { type: String, required: true, trim: true, maxlength: 32 },
     model: { type: String, required: true, trim: true, maxlength: 32 },
-    type: { type: String, required: true, enum: ['gas', 'electric'] },
+    type: { type: String, required: true },
     plug: { type: String },
 }, { timestamps: true });
 
@@ -31,9 +30,11 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 userSchema.pre('save', async function (next) {
-    if (this.cars?.map((car) => car.type === 'electric' && !car.plug)) {
-        throw new Error('Plug is required');
-    }
+    this.cars?.map((car) => {
+        if (car.type === 'electric' && !car.plug) {
+            throw new Error('Electric cars must have a plug type selected !');
+        }
+    })
     next();
 });
 
