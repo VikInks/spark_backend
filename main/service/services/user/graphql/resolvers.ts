@@ -27,6 +27,14 @@ interface carInput {
     plug: string
 }
 
+const refResolvers = {
+    Query: {
+        image: require('../../image/graphql/resolvers'),
+        parking: require('../../parking/graphql/resolvers'),
+        reservation: require('../../reservation/graphql/resolvers'),
+    }
+}
+
 /**
  * A collection of resolvers for handling GraphQL queries and mutations related to users.
  */
@@ -41,16 +49,42 @@ export const resolvers = {
          * @param context - The context object which contains information about the current request.
          * @returns An object indicating the success or failure of the operation, along with a message.
          */
-        // todo: add other queries to fetch other datas related to user on other services
         me: async (_: any, __: any, context: contextType) => {
             const userId = verifyAuthenticatedUser(context);
             if (typeof userId !== 'string') return userId;
             try {
+                let images, parkings, reservations;
+
                 const user = await User.findById(userId);
                 if (!user) {
                     return respondWithStatus(404, 'User not found!', false, null, context);
                 }
-                return respondWithStatus(200, 'User fetched successfully!', true, user?.toJSON(), context);
+
+                try {
+                    images = await refResolvers.Query.image.resolvers.Query.images(_, __, context);
+                } catch (e) {
+                    return exceptionHandler('finding image', e, context);
+                }
+
+                try {
+                    parkings = await refResolvers.Query.parking.resolvers.Query.getParkings(_, __, context);
+                } catch (e) {
+                    return exceptionHandler('finding parking', e, context);
+                }
+
+                try {
+                    reservations = await refResolvers.Query.reservation.resolvers.Query.reservations(_, __, context);
+                } catch (e) {
+                    return exceptionHandler('finding reservation', e, context);
+                }
+
+                const me = {
+                    ...user.toJSON(),
+                    ...images.toJSON(),
+                    ...parkings.toJSON(),
+                    ...reservations.toJSON()
+                }
+                return respondWithStatus(200, 'User datas fetched successfully!', true, me, context);
             } catch (e) {
                 return exceptionHandler('finding user', e, context);
             }
@@ -155,7 +189,6 @@ export const resolvers = {
                 const userId = verifyAuthenticatedUser(context);
                 if (typeof userId !== 'string') return userId;
                 try {
-                    const updatedSessionData = {user: {...updateFields}};
                     const updatedUser = await updateUserFields(userId, updateFields);
                     return respondWithStatus(200, 'User updated successfully!', true, updatedUser.toJSON(), context);
                 } catch (e) {
