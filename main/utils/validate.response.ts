@@ -1,5 +1,5 @@
 import Joi from "joi";
-import {contextType} from "../base/interface/contextType";
+import {contextType} from "../service/base/interface/contextType";
 import {validateInput} from "./validate.input";
 import {exceptionHandler} from "./exception.handler";
 

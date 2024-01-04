@@ -1,4 +1,4 @@
-import {contextType} from "../base/interface/contextType";
+import {contextType} from "../service/base/interface/contextType";
 
 /**
  * Sets the HTTP response status code and sends a JSON response with the given data.

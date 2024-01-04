@@ -1,12 +1,12 @@
 /**
  * Importing necessary modules and types
  */
-import {contextType} from "../../../base/interface/contextType";
 import {validateAndResponse} from "../../../utils/validate.response";
-import {validationSchemas} from "./data_validation/mutation.validation";
-import {History, Parking} from "../model/parking.model";
+import {validationSchemas} from "../../data_validation/parking/mutation.validation";
+import {History, Parking} from "../../../model/parking/parking.model";
 import {exceptionHandler} from "../../../utils/exception.handler";
 import {respondWithStatus} from "../../../utils/respond.status";
+import {contextType} from "../../../service/base/interface/contextType";
 
 type filterType = {
     ownerId?: string,

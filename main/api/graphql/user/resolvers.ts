@@ -1,21 +1,21 @@
-import {User} from '../model/user.model';
+import {User} from '../../../model/user/user.model';
 import bcrypt from 'bcryptjs';
-import {validationSchemas} from "./data_validation/mutation.validation";
-import {
-    UpdateLocation,
-    UpdateUserInput,
-    UserInput
-} from "../model/interface/mutation/utils.mutation.interface";
+import {validationSchemas} from "../../data_validation/user/mutation.validation";
 import {
     generateJwt,
     updateUserFields, verifyPasswordValidity,
-} from "../utils/function.utils.resolvers";
-import {contextType} from "../../../base/interface/contextType";
+} from "./function.utils.resolvers";
 import {verifyAuthenticatedUser} from "../../../utils/verify.authenticated.user";
 import {exceptionHandler} from "../../../utils/exception.handler";
 import {respondWithStatus} from "../../../utils/respond.status";
 import {validateAndResponse} from "../../../utils/validate.response";
 import {manageCookie} from "../../../utils/token.management";
+import {contextType} from "../../../service/base/interface/contextType";
+import {
+    UpdateLocation,
+    UpdateUserInput,
+    UserInput
+} from "../../../model/user/interface/mutation/utils.mutation.interface";
 
 interface carInput {
     id: string
@@ -29,8 +29,8 @@ interface carInput {
 const refResolvers = {
     Query: {
         image: require('../../image/graphql/resolvers'),
-        parking: require('../../parking/graphql/resolvers'),
-        reservation: require('../../reservation/graphql/resolvers'),
+        parking: require('../parking/resolvers'),
+        reservation: require('../reservation/resolvers'),
     }
 }
 
