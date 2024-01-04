@@ -1,5 +1,5 @@
 import {Response} from "express";
-import {contextType} from "../base/interface/contextType";
+import {contextType} from "../service/base/interface/contextType";
 
 
 /**

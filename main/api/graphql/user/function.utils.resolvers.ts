@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import {User} from "../model/user.model";
+import {User} from "../../../model/user/user.model";
 import {contextType} from "../../../base/interface/contextType";
 import {respondWithStatus} from "../../../utils/respond.status";
 

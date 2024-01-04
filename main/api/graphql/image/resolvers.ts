@@ -1,10 +1,10 @@
-import {imageValidation} from "./data_validation/mutation.validation";
-import ImageModel from "../model/image.model";
-import {deleteImage, processAndSaveImage} from "../function.utils.resolver";
-import {contextType} from "../../../base/interface/contextType";
+import {imageValidation} from "../../data_validation/image/mutation.validation";
 import {validateAndResponse} from "../../../utils/validate.response";
 import {exceptionHandler} from "../../../utils/exception.handler";
 import {respondWithStatus} from "../../../utils/respond.status";
+import {contextType} from "../../../service/base/interface/contextType";
+import ImageModel from "../../../model/image/image.model";
+import {deleteImage, processAndSaveImage} from "./function.utils.resolver";
 
 export const resolvers = {
     Query: {

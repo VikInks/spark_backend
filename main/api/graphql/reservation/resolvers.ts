@@ -1,9 +1,9 @@
 import {validateAndResponse} from "../../../utils/validate.response";
-import {contextType} from "../../../base/interface/contextType";
-import {validationSchemas} from "./data_validation/mutation.validation";
+import {validationSchemas} from "../../data_validation/reservation/mutation.validation";
 import {exceptionHandler} from "../../../utils/exception.handler";
 import {respondWithStatus} from "../../../utils/respond.status";
-import {Reservation} from "../model/reservation.model";
+import {Reservation} from "../../../model/reservation/reservation.model";
+import {contextType} from "../../../service/base/interface/contextType";
 
 type reservationType = {
     userId?: string,

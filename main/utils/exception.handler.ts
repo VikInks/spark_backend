@@ -1,4 +1,4 @@
-import {contextType} from "../base/interface/contextType";
+import {contextType} from "../service/base/interface/contextType";
 import {respondWithStatus} from "./respond.status";
 
 /**
