@@ -1,6 +1,7 @@
 {
-  "watch": ["*.ts", "main/**/*.ts"],
+  "watch": ["*.ts", "src/**/*.ts"],
   "ext": "ts",
+  "exec": "ts-node ./src/server.ts",
   "ignore": ["node_modules"],
   "legacyWatch": true
 }

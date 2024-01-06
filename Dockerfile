@@ -14,4 +14,4 @@ COPY . .
 EXPOSE 4000
 
 # Utilisez nodemon pour démarrer l'application
-CMD ["npx", "nodemon", "main/server.ts"]
+CMD ["npx", "nodemon", "src/server.ts"]
