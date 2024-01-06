@@ -12,5 +12,6 @@ import {contextType} from "../service/base/interface/contextType";
 export const respondWithStatus = (status: number, message: string, success: boolean, data: any, context: contextType) => {
     console.trace();
     console.log('respondWithStatus: ', status, message, success, data);
-    return context.res.status(status).json({success: success, message: message, data: data});
+    context.res.status(status);
+    return {success: success, message: message, data: data};
 }
