@@ -79,8 +79,11 @@ export const resolvers = {
                     if (!!user) return respondWithStatus(401, 'User already exists!', false, null, context);
                     console.log('pouet')
                     verifyPasswordValidity(args.user.password, context);
-                    const newUser = await createUser(args.user);
-                    console.log(`new user: ${newUser.toJSON()}`);
+                    let newUser = await createUser(args.user);
+                    // newUser = {
+                    //     ...newUser,
+                    //     cars: newUser.cars?.map((car) => car.toJSON()),
+                    // }
                     return respondWithStatus(200, 'User created successfully!', true, newUser.toJSON(), context);
                 } catch (e) {
                     console.log(`sign up error: ${e}`);

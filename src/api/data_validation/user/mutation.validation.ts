@@ -20,10 +20,7 @@ const signUpValidationSchema = Joi.object({
         brand: Joi.string().required(),
         model: Joi.string().required(),
         type: Joi.string().required(),
-        plug: Joi.string().when('type', {
-            is: 'electric',
-            then: Joi.required(),
-        }),
+        plug: Joi.string().when('type', {is: Joi.string().valid('electric', 'hybrid'), then: Joi.string().required(), otherwise: Joi.string().allow(null, '')}),
     })).required(),
 });
 
