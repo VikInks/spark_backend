@@ -35,6 +35,6 @@
     "typescript": "^5.3.3"
   },
   "scripts": {
-    "start": "nodemon --exec ts-node main/server.ts"
+    "start": "nodemon"
   }
 }
