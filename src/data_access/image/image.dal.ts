@@ -16,12 +16,8 @@ export const findImagesByType = async (type: string) => {
     return ImageModel.find({ type });
 };
 
-export const updateImageDetails = async (imageId: string, updateData: any) => {
-    return ImageModel.findByIdAndUpdate(imageId, updateData, { new: true });
-};
-
 export const findImageByNameAndUserId = async (name: string, userId: string) => {
-    return ImageModel.findOne({ name, userId });
+    return ImageModel.findOne({ name: name, userId: userId });
 };
 
 export const updateImageByIdAndUserId = async (id: string, userId: string, updateData: any) => {
@@ -32,10 +28,10 @@ export const deleteImageByIdAndUserId = async (id: string, userId: string) => {
     return ImageModel.findOneAndDelete({ _id: id, userId });
 };
 
-export const removeImagesByUserId = async (userId: string) => {
-    return ImageModel.deleteMany({ userId });
-};
+export const countParkingImagesByUserId = async (userId: string) => {
+    return ImageModel.countDocuments({ userId, type: 'parking' });
+}
 
-export const removeImagesByParkingId = async (parkingId: string) => {
-    return ImageModel.deleteMany({ parkingId });
-};
+export const createImage = async (imageData: any) => {
+    return ImageModel.create(imageData);
+}

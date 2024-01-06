@@ -41,11 +41,13 @@ export const typeDefs = gql`
     extend type Query {
         getParking(ID: String!): Response
         getParkings(filter: Filter): Response
+        getAllParkingHistory: Response
     }
 
     extend type Mutation {
         createParking(parking: ParkingInput!): Response
         updateParking(id: String!, parking: ParkingInput!): Response
         deleteParking(id: String!): Response
+        recoverParking(id: String!): Response
     }
 `;

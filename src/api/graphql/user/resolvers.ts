@@ -71,19 +71,15 @@ export const resolvers = {
          * @returns Promise{Object} - The result of the sign-up operation.
          * @throws {Error} - If the user already exists.
          */
+        // TODO: use SwissId api to verify user
         signUp: async (_: any, args: { user: UserInput }, context: contextType) => {
             return validateAndResponse(validationSchemas.signUpValidationSchema, args.user, 'sign up user', context, async () => {
                 try {
                     const user = await findUserByUsernameOrEmail(args.user.username ?? '', args.user.email ?? '');
-                    console.log(`user: ${!!user}`);
                     if (!!user) return respondWithStatus(401, 'User already exists!', false, null, context);
-                    console.log('pouet')
                     verifyPasswordValidity(args.user.password, context);
-                    let newUser = await createUser(args.user);
-                    // newUser = {
-                    //     ...newUser,
-                    //     cars: newUser.cars?.map((car) => car.toJSON()),
-                    // }
+                    const newUser = await createUser(args.user);
+                    // TODO: Send email verification
                     return respondWithStatus(200, 'User created successfully!', true, newUser.toJSON(), context);
                 } catch (e) {
                     console.log(`sign up error: ${e}`);

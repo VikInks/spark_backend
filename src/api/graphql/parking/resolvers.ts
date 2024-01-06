@@ -3,10 +3,17 @@
  */
 import {validateAndResponse} from "../../../utils/validate.response";
 import {validationSchemas} from "../../data_validation/parking/mutation.validation";
-import {History, Parking} from "../../../model/parking/parking.model";
 import {exceptionHandler} from "../../../utils/exception.handler";
 import {respondWithStatus} from "../../../utils/respond.status";
 import {contextType} from "../../../service/base/interface/contextType";
+import {
+    createParking, deleteParkingById, deleteParkingHistoryById, findAllParkingHistoryByUserId,
+    findParkingByFilter,
+    findParkingByGeoLocation,
+    findParkingById, findParkingHistoryByOwnerId,
+    pushToHistoryParking,
+    updateParkingById
+} from "../../../data_access/parking/parking.dal";
 
 type filterType = {
     ownerId?: string,
@@ -38,7 +45,7 @@ export const resolvers = {
          */
         getParking: async (_: any, {id}: any, context: contextType) => {
             return validateAndResponse(validationSchemas.getParkingValidationSchema, {id}, 'get parking', context, async () => {
-                const parking = await Parking.findById(id);
+                const parking = await findParkingById(id);
                 if (!parking) {
                     return exceptionHandler('Parking not found', 404, context);
                 }
@@ -54,10 +61,21 @@ export const resolvers = {
         getParkings: async (_: any, {filter}: { filter: filterType }, context: contextType) => {
             return validateAndResponse(validationSchemas.getParkingsValidationSchema, {filter}, 'get parkings', context, async () => {
                 try {
-                    const parkings = await Parking.find(filter);
+                    const parkings = await findParkingByFilter(filter);
                     return respondWithStatus(200, `${!!parkings ? parkings.length : 0} parking found`, true, parkings.map(parking => parking.toJSON()), context);
                 } catch (e) {
                     return exceptionHandler('get parkings', e, context);
+                }
+            });
+        },
+        getAllParkingHistory: async (_: any, __: any, context: contextType) => {
+            return validateAndResponse(null, null, 'get parking history', context, async () => {
+                try {
+                    const parkings = await findAllParkingHistoryByUserId(context.user as string);
+                    if(!parkings) return exceptionHandler('No parking fount in history', 404, context);
+                    return respondWithStatus(200, `${!!parkings ? parkings.length : 0} parking found`, true, parkings.map(parking => parking.toJSON()), context);
+                } catch (e) {
+                    return exceptionHandler('get parking history', e, context);
                 }
             });
         }
@@ -74,16 +92,11 @@ export const resolvers = {
          */
         createParking: async (_: any, {parking}: any, context: contextType) => {
             return validateAndResponse(validationSchemas.createParkingValidationSchema, {parking}, 'create parking', context, async () => {
-                const parkingExists = await Parking.findOne({geoLocation: parking.geoLocation});
+                const parkingExists = await findParkingByGeoLocation(parking.coordinates, parking.radius);
                 if (parkingExists) {
                     return exceptionHandler('Parking this position already exist', 400, context);
                 }
-                const newParking = new Parking(parking);
-                try {
-                    await newParking.save();
-                } catch (e) {
-                    return exceptionHandler('create parking place', 500, context);
-                }
+                const newParking = await createParking(parking);
                 return respondWithStatus(200, 'Parking created', true, newParking.toJSON(), context);
             });
         },
@@ -93,12 +106,12 @@ export const resolvers = {
          * @param {Object} args - an object containing the arguments passed to the mutation
          * @param {contextType} context - the context object passed from the server
          */
-        updateParking: async (_: any, {id, parking}: any, context: contextType) => {
+        updateParking: async (_: any, {id, parking}: { id: string, parking: any }, context: contextType) => {
             return validateAndResponse(validationSchemas.updateParkingValidationSchema, {
                 id,
                 parking
             }, 'update parking', context, async () => {
-                const updatedParking = await Parking.findByIdAndUpdate(id, parking);
+                const updatedParking = await updateParkingById(id, parking);
                 if (!updatedParking) {
                     return exceptionHandler('Parking not found', 404, context);
                 }
@@ -114,21 +127,32 @@ export const resolvers = {
         deleteParking: async (_: any, {id}: any, context: contextType) => {
             return validateAndResponse(validationSchemas.getParkingValidationSchema, {id}, 'delete parking', context, async () => {
                 try {
-                    const pushToHistory = await Parking.findById(id);
+                    const pushToHistory = await findParkingById(id);
                     if (!pushToHistory) {
                         return exceptionHandler('Parking not found', 404, context);
                     }
-                    await History.create({...pushToHistory, active: false});
+                    await pushToHistoryParking(pushToHistory.toJSON());
                 } catch (e) {
                     return exceptionHandler('add to history', 500, context);
                 }
 
-                const deletedParking = await Parking.findByIdAndDelete(id);
+                const deletedParking = await deleteParkingById(id);
                 if (!deletedParking) {
                     return exceptionHandler('Parking not found', 404, context);
                 }
                 return respondWithStatus(200, 'Parking deleted', true, null, context);
             });
         },
+        recoverParking: async (_: any, id: any, context: contextType) => {
+            return validateAndResponse(validationSchemas.getParkingValidationSchema, id, 'recover parking', context, async () => {
+                const parking = await findParkingHistoryByOwnerId(id);
+                if (!parking) {
+                    return exceptionHandler('Parking not found', 404, context);
+                }
+                const newParking = await createParking(parking);
+                await deleteParkingHistoryById(id);
+                return respondWithStatus(200, 'Parking recovered', true, newParking.toJSON(), context);
+            });
+        }
     },
 };

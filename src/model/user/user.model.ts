@@ -46,6 +46,20 @@ userSchema.pre('save', async function (next) {
     next();
 });
 
+userSchema.set('toJSON', {
+    transform: (doc, ret, options) => {
+        ret.id = ret._id;
+        ret.cars?.map((car: any) => {
+            car.id = car._id;
+            delete car._id;
+        });
+        delete ret._id;
+        delete ret.__v;
+        delete ret.password;
+        return ret;
+    }
+});
+
 userSchema.methods.matchPassword = async function (enteredPassword: string) {
     return bcrypt.compare(enteredPassword, this.password);
 };

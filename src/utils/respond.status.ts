@@ -10,8 +10,6 @@ import {contextType} from "../service/base/interface/contextType";
  * @param {contextType} context - The execution context for the Azure Function.
  */
 export const respondWithStatus = (status: number, message: string, success: boolean, data: any, context: contextType) => {
-    console.trace();
-    console.log('respondWithStatus: ', status, message, success, data);
     context.res.status(status);
     return {success: success, message: message, data: data};
 }
